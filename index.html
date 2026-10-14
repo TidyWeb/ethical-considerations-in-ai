@@ -594,6 +594,133 @@
     .p8-hole,.p8-bottom::before { display:none; }
     .p8-bottom { margin-top:.9rem; }
   }
+    /* checkpoint track (section 10) */
+    :root { --hazard:#e8642c; --checked:#f6d84a; --go:#08715f; }
+
+  .ct-intro { max-width:none; }
+  .ct-cols { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:0 2.4rem; }
+  .ct-cols p { max-width:none; }
+  @media (max-width:860px) { .ct-cols { grid-template-columns:1fr; } }
+  .ct-intro h3 { margin-top:1rem; }
+  .ct-ex { max-width:none; margin:1.6rem 0 2.6rem; }
+  .ct-ex-steps { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:.6rem; margin:1rem 0; padding:0; list-style:none; counter-reset:ex; }
+  .ct-ex-steps li { padding:.75rem .8rem; border-top:4px solid var(--hazard); border-radius:4px; background:#fff3ec; font-size:.86rem; counter-increment:ex; }
+  .ct-ex-steps li::before { display:block; margin-bottom:.25rem; color:#8f3510; content:"Step " counter(ex); font:500 .58rem var(--mono); letter-spacing:.07em; text-transform:uppercase; }
+  .ct-ex-steps b { display:block; margin-bottom:.2rem; color:var(--ink); }
+  .ct-ex-note { margin:1rem 0 .8rem; padding:.85rem 1rem; border-left:6px solid #c9a800; border-radius:4px; background:#fdf6d3; }
+  .ct-ex-note b { display:block; margin-bottom:.3rem; color:#6b5600; font:500 .62rem var(--mono); letter-spacing:.07em; text-transform:uppercase; }
+  .ct-ex-note p { margin:0; font-size:.92rem; }
+  .ct-ex-end { margin:0; font-size:.9rem; }
+  @media (max-width:1050px) { .ct-ex-steps { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+  @media (max-width:560px) { .ct-ex-steps { grid-template-columns:1fr; } }
+  .ct-sum { display:flex; flex-wrap:wrap; align-items:center; gap:.5rem 1.1rem; margin:0 0 1.2rem; padding:.6rem .9rem; border:1px solid #c3ccd3; border-radius:10px; background:#fff; font-size:.82rem; }
+  .ct-sum b { font:500 .62rem var(--mono); letter-spacing:.07em; text-transform:uppercase; color:var(--quiet); }
+  .ct-sum span { display:inline-flex; align-items:center; gap:.35rem; }
+  .ct-sum .reset { margin-left:auto; padding:.3rem .7rem; border:1px solid var(--frame); border-radius:6px; background:#fff; color:var(--navy); font:500 .62rem var(--mono); letter-spacing:.06em; text-transform:uppercase; cursor:pointer; }
+  .lamp { position:relative; display:inline-grid; place-items:center; width:1.35rem; height:1.35rem; padding:0; border:2px solid #8d99a3; border-radius:50%; background:#fff; color:#5c6670; font:700 .55rem var(--sans); cursor:pointer; }
+  .lamp.yes { border-color:#b4441a; background:var(--hazard); color:#fff; box-shadow:0 0 0 3px rgb(232 100 44 / .22); }
+  .lamp.no { border-color:#7f8a93; background:#aeb7bf; color:#fff; }
+  .lamp.yes.rev { border-color:#a88a00; background:var(--checked); color:var(--ink); box-shadow:none; }
+  .lamp.yes.rev::after { position:absolute; right:-.45rem; bottom:-.45rem; display:grid; place-items:center; width:.85rem; height:.85rem; border-radius:50%; color:#fff; background:var(--navy); content:"✓"; font-size:.5rem; }
+  .lamp:focus-visible { outline:2px solid var(--navy); outline-offset:3px; }
+  .lamp.sel { outline:2px dashed var(--navy); outline-offset:3px; }
+  .sw { display:inline-block; width:.9rem; height:.9rem; border:2px solid #8d99a3; border-radius:50%; background:#fff; vertical-align:-2px; }
+  .sw.yes { border-color:#b4441a; background:var(--hazard); } .sw.no { border-color:#7f8a93; background:#aeb7bf; } .sw.rev { border-color:#a88a00; background:var(--checked); }
+
+  .ct-start { display:inline-block; margin:0 0 .7rem; padding:.45rem 1.1rem; border:2px solid var(--navy); border-radius:99px; background:#fff; color:var(--navy); font-weight:700; font-size:.85rem; }
+  .ct-track { position:relative; display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:0 1.4rem; }
+  .ct-track::before { position:absolute; z-index:0; top:2.6rem; right:0; left:0; height:6px; border-radius:3px; background:repeating-linear-gradient(90deg,#c9d3da 0 16px,transparent 16px 22px); content:""; }
+  .ct-col { position:relative; z-index:1; display:flex; flex-direction:column; align-items:center; min-width:0; }
+  .ct-box { width:100%; min-height:6.1rem; padding:.55rem .55rem .65rem; border:2px solid var(--navy); border-radius:4px; background:#fff; text-align:center; cursor:pointer; }
+  .ct-box.active { box-shadow:0 0 0 3px var(--sheet),0 0 0 5px var(--navy); }
+  .ct-box h4 { margin:0 0 .45rem; font-size:.82rem; line-height:1.2; }
+  .ct-box h4 small { display:block; color:var(--quiet); font:500 .55rem var(--mono); letter-spacing:.07em; text-transform:uppercase; }
+  .ct-lamps { display:flex; flex-wrap:wrap; justify-content:center; gap:.3rem; }
+  .ct-col:not(:last-child)::after { position:absolute; z-index:2; top:2.15rem; right:-1.15rem; color:var(--navy); content:"▶"; font-size:.8rem; }
+  .ct-link { width:2px; height:1rem; background:var(--navy); }
+  .ct-dia { display:grid; place-items:center; width:5.6rem; height:3.6rem; background:var(--navy); clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%); }
+  .ct-dia span { display:grid; place-items:center; width:calc(100% - 5px); height:calc(100% - 5px); background:#fff; clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%); color:var(--ink); font-size:.6rem; font-weight:700; line-height:1.05; text-align:center; }
+  .ct-out { margin-top:.2rem; font:500 .56rem var(--mono); letter-spacing:.06em; text-align:center; text-transform:uppercase; color:var(--quiet); }
+  .ct-delay { display:none; align-items:center; justify-content:center; width:92%; min-height:2.6rem; margin-top:.25rem; padding:.3rem .9rem .3rem .6rem; border:2px solid var(--hazard); border-radius:0 2rem 2rem 0; background:#fff3ec; color:#8f3510; font-size:.7rem; font-weight:700; line-height:1.2; text-align:center; }
+  .ct-doc { display:none; width:96%; margin-top:.5rem; }
+  .ct-doc .sheet { padding:.45rem .5rem .2rem; border:1.5px solid #8f3510; border-bottom:0; background:#fff; font-size:.66rem; line-height:1.3; }
+  .ct-doc .sheet b { display:block; margin-bottom:.15rem; color:#8f3510; font:500 .52rem var(--mono); letter-spacing:.06em; text-transform:uppercase; }
+  .ct-doc .sheet p { margin:.2rem 0; }
+  .ct-doc svg { display:block; width:100%; height:10px; }
+  .ct-col.held .ct-delay,.ct-col.held .ct-doc { display:flex; }
+  .ct-col.held .ct-doc { display:block; }
+  .ct-col.held .ct-dia { background:var(--hazard); }
+  .ct-col.held .ct-out { color:#8f3510; }
+  .ct-col.clear .ct-dia { background:#7f8a93; }
+
+  .ct-end { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:.4rem 1rem; margin-top:1.3rem; padding:.7rem 1.2rem; border:2px solid var(--navy); border-radius:99px; background:#fff; text-align:center; }
+  .ct-end b { color:var(--navy); }
+  .ct-end span { font-size:.82rem; }
+  .ct-end.held { border-color:var(--hazard); background:#fff3ec; }
+
+  .ct-panel { margin-top:1.6rem; border:1px solid #c3ccd3; border-radius:12px; background:#fff; }
+  .ct-tabs { display:flex; flex-wrap:wrap; gap:.3rem; padding:.6rem .6rem 0; border-bottom:1px solid #dfe4e8; }
+  .ct-tabs button { padding:.45rem .7rem; border:1px solid #c3ccd3; border-bottom:0; border-radius:8px 8px 0 0; background:#f4f6f8; color:var(--navy); font:700 .74rem var(--sans); cursor:pointer; }
+  .ct-tabs button[aria-selected="true"] { background:#fff; box-shadow:0 2px 0 #fff; border-color:var(--navy); }
+  .ct-tabs button i { display:inline-block; min-width:1.1rem; margin-left:.3rem; padding:0 .25rem; border-radius:99px; color:#fff; background:var(--hazard); font:500 .6rem var(--mono); font-style:normal; }
+  .ct-tabs button i:empty { display:none; }
+  .ct-qs { margin:0; padding:.4rem 1rem .8rem; list-style:none; }
+  .ct-q { display:grid; grid-template-columns:1.6rem minmax(0,1fr) auto; gap:.4rem .8rem; align-items:start; padding:.75rem 0; border-bottom:1px solid #eef0f2; }
+  .ct-q:last-child { border-bottom:0; }
+  .ct-q .qt { color:var(--ink); font-size:1.12rem; font-weight:700; line-height:1.38; }
+  .ct-q .qt small { font-weight:500; display:inline-block; margin-left:.35rem; padding:.05rem .35rem; border:1px solid var(--navy); border-radius:4px; color:var(--navy); font:500 .52rem var(--mono); letter-spacing:.06em; text-transform:uppercase; vertical-align:2px; }
+  .ct-yn { display:flex; gap:.5rem; }
+  .ct-yn button { min-width:4.7rem; min-height:2.75rem; padding:.5rem 1rem; border:2px solid #8d99a3; border-radius:9px; background:#fff; color:var(--ink); font:700 .96rem var(--sans); cursor:pointer; }
+  .ct-yn button:hover,.ct-yn button:focus-visible { border-color:var(--navy); outline:none; }
+  .ct-yn button.y[aria-pressed="true"] { border-color:#b4441a; background:var(--hazard); color:#fff; }
+  .ct-yn button.n[aria-pressed="true"] { border-color:#7f8a93; background:#aeb7bf; color:#fff; }
+  .ct-act { grid-column:2 / -1; display:none; flex-wrap:wrap; align-items:center; gap:.4rem .9rem; padding:.55rem .7rem; border-left:4px solid var(--hazard); background:#fff3ec; font-size:.82rem; }
+  .ct-q.yes .ct-act { display:flex; }
+  .ct-q.rev .ct-act { border-left-color:#c9a800; background:#fdf6d3; }
+  .ct-q.rev .ct-act label { color:#6b5600; }
+  .ct-act label { display:inline-flex; align-items:center; gap:.35rem; font-weight:700; color:#8f3510; cursor:pointer; }
+  .ct-act input { width:1rem; height:1rem; accent-color:var(--navy); }
+  .ct-note { margin:1rem 0 0; padding:.75rem .9rem; border-left:4px solid var(--hazard); background:#fff3ec; font-size:.84rem; }
+
+  .ct-help { display:inline-block; margin:.35rem 0 0 .6rem; padding:.22rem .75rem; border:2px solid var(--go); border-radius:99px; background:transparent; color:var(--go); font:700 .84rem var(--sans); cursor:pointer; vertical-align:1px; }
+  .ct-help:hover,.ct-help:focus-visible { background:rgb(8 113 95 / .08); outline:none; }
+  .ct-act .ct-help { margin-left:0; }
+  .ct-q .qt .ct-help { display:table; margin:.5rem 0 0; }
+  .ct-dlg { width:min(40rem,calc(100vw - 2rem)); max-height:calc(100vh - 3rem); padding:0; border:2px solid var(--navy); border-radius:14px; background:#fff; color:var(--body); }
+  .ct-dlg::backdrop { background:rgb(27 40 56 / .45); }
+  .ct-dlg .inner { padding:1.2rem 1.3rem 1.1rem; }
+  .ct-dlg .dq { display:grid; grid-template-columns:1.6rem 1fr; gap:.6rem; margin:0 0 .6rem; padding-bottom:.7rem; border-bottom:1px solid #dfe4e8; font-size:1rem; }
+  .ct-dlg h4 { margin:.9rem 0 .3rem; color:var(--navy); font:500 .62rem var(--mono); letter-spacing:.08em; text-transform:uppercase; }
+  .ct-dlg p,.ct-dlg li { font-size:.9rem; }
+  .ct-dlg ul,.ct-dlg ol { margin:.2rem 0; padding-left:1.2rem; }
+  .ct-dlg li { margin:.25rem 0; }
+  .dyn { display:grid; grid-template-columns:1fr 1fr; gap:.5rem; margin-top:.9rem; }
+  .dyn > div { padding:.6rem .7rem; border-radius:8px; font-size:.84rem; }
+  .dyn b { display:block; margin-bottom:.2rem; font:500 .6rem var(--mono); letter-spacing:.07em; text-transform:uppercase; }
+  .dy { border-left:4px solid var(--hazard); background:#fff3ec; } .dy b { color:#8f3510; }
+  .dn { border-left:4px solid #7f8a93; background:#f1f3f5; } .dn b { color:#4b555e; }
+  .dref { margin:.8rem 0 0; color:var(--quiet); font-size:.8rem !important; }
+  .dbtns { display:flex; flex-wrap:wrap; gap:.4rem; margin-top:1rem; padding-top:.8rem; border-top:1px solid #dfe4e8; }
+  .dbtns button { padding:.45rem .9rem; border:1.5px solid #8d99a3; border-radius:6px; background:#fff; font:700 .8rem var(--sans); cursor:pointer; }
+  .dbtns .y { border-color:#b4441a; color:#8f3510; } .dbtns .y:hover { color:#fff; background:var(--hazard); }
+  .dbtns .n:hover { color:#fff; background:#aeb7bf; }
+  .dbtns .x { margin-left:auto; }
+  @media (max-width:560px) { .dyn { grid-template-columns:1fr; } }
+  @media (max-width:860px) {
+    .ct-track { grid-template-columns:1fr; gap:1.2rem; padding-left:1.4rem; }
+    .ct-track::before { top:0; bottom:0; left:.35rem; right:auto; width:6px; height:auto; background:repeating-linear-gradient(180deg,#c9d3da 0 16px,transparent 16px 22px); }
+    .ct-col:not(:last-child)::after { top:auto; right:auto; bottom:-1.05rem; left:-1.25rem; content:"▼"; }
+    .ct-col { display:grid; grid-template-columns:minmax(0,1fr) 5.6rem; gap:.4rem .6rem; align-items:center; }
+    .ct-box { grid-column:1 / -1; }
+    .ct-link { display:none; }
+    .ct-dia { grid-column:2; grid-row:2; }
+    .ct-out { grid-column:2; grid-row:3; }
+    .ct-delay,.ct-doc { grid-column:1; width:100%; }
+    .ct-col.held .ct-delay { grid-row:2; }
+    .ct-col.held .ct-doc { grid-row:3 / 5; }
+    .ct-q { grid-template-columns:1.6rem minmax(0,1fr); }
+    .ct-yn { grid-column:2; }
+  }
   </style>
 </head>
 <body>
@@ -1256,6 +1383,46 @@
 
         <section class="sec" id="check">
           <div class="sec-head"><span class="sec-num" aria-hidden="true">10</span><div><p class="eyebrow">LMS section 10 · try before opening the answer</p><h2>Use the questions on a new system.</h2></div></div>
+          <section class="ct-intro">
+<h3>Screen a project with 27 yes/no questions</h3>
+<div class="ct-cols"><div>
+<p>Before you build or use an AI system with data, you can screen it with 27 yes/no questions. They come from the earlier sections of this guide and are grouped into six checkpoints: purpose and benefit, data, decisions and oversight, people affected, safety and robustness, and responsibility and law.</p>
+<p>Every question is worded the same way: <strong>a yes is a concern.</strong> It doesn't stop the project, but it holds it at that checkpoint until someone has investigated the concern and written down what they found. A no means no concern was raised there; it doesn't mean the system is safe.</p>
+</div><div>
+<p>The questions don't branch into one another. Each one either raises a flag or doesn't, and the flags build up into one decision at the end, made by a named person: proceed, narrow the use, redesign, or stop. Four questions are marked as legal triggers: a yes there means checking the law against the real facts, not answering from memory.</p>
+<p><strong>How to use it:</strong> work through the checkpoints in the tabs below. If you're unsure what a question means, open <em>How do I answer this?</em> For each yes, follow the note, investigate, then tick <em>Investigated and recorded</em>. The lamp turns yellow and the hold lifts.</p>
+</div></div>
+<div class="worked ct-ex"><span class="wlabel">Worked example · invented</span>
+<h4>Question 12 and an automatic loan refusal</h4>
+<p><strong>The situation.</strong> A lender scores every loan application. Below a threshold, the refusal is sent automatically; no person looks at it. Most refusals are for people with genuinely poor credit histories, and reviewing them all by hand would change nothing.</p>
+<ol class="ct-ex-steps">
+<li><b>Answer the question.</b> Q12 asks: is a consequential decision made without meaningful human involvement? A loan refusal matters to the applicant and nobody reviews it, so the answer is <strong>yes</strong>. The lamp turns orange and checkpoint C holds. (Q1, Q5 and Q6 would also light: it's a decision that matters, it uses personal data, and the score is profiling.)</li>
+<li><b>Ask why it matters.</b> The score is usually right, but not always. Someone with the same name as a bad debtor, or who moved into an address that was flagged, gets refused for a record that isn't theirs, and they can't fix what they don't know about.</li>
+<li><b>Open the guidance.</b> <em>How do I answer this?</em> points to the UK GDPR safeguards for solely automated significant decisions: information about the decision, a way to make representations, human intervention, and a way to contest.</li>
+<li><b>Design the response.</b> Keep the automation, but give every refused applicant a route into genuine human review, and fix repeat errors at the source rather than case by case.</li>
+</ol>
+<div class="ct-ex-note"><b>Note recorded against Q12</b>
+<p>Refusals below threshold are automated. Each refusal notice says it was automated, gives the main factors and explains how to appeal. An appeal triggers review by a trained underwriter with the full file and authority to overturn, within a set number of days. The applicant can say what they think is wrong; the reviewer checks it against the source records. Appeals and overturns are logged monthly, and repeat causes, such as mismatched names or addresses, are fixed in the data. Any criminal-record inputs are checked against their own legal conditions. Owner: a named lending-operations manager.</p></div>
+<p class="ct-ex-end">Tick <em>Investigated and recorded</em> and the Q12 lamp turns yellow: the concern has been dealt with and written down. It doesn't mean the lending criteria are fair or lawful; a real lender would confirm the design with its data protection officer.</p>
+</div>
+</section>
+<figure class="plate" aria-labelledby="ct-cap">
+  <p class="plate-title">Project checkpoint track: 27 yes/no screening questions</p>
+  <div class="ct-sum" aria-live="polite"><b>Lamps</b>
+    <span><i class="sw"></i> unanswered <strong id="ct-c-un">27</strong></span>
+    <span><i class="sw yes"></i> orange: concern <strong id="ct-c-yes">0</strong></span>
+    <span><i class="sw rev"></i> yellow: investigated and recorded <strong id="ct-c-rev">0</strong></span>
+    <span><i class="sw no"></i> grey: no flag <strong id="ct-c-no">0</strong></span>
+    <button class="reset" id="ct-reset" type="button">Reset</button></div>
+  <p class="ct-start">Start: project proposal</p>
+  <div class="ct-track" id="ct-track"></div>
+  <div class="ct-end" id="ct-end"><b>End: the named owner decides: proceed · narrow · redesign · stop</b><span id="ct-end-msg"></span></div>
+  <div class="ct-panel"><div class="ct-tabs" id="ct-tabs" role="tablist" aria-label="Checkpoints"></div><ol class="ct-qs" id="ct-qs"></ol></div>
+  <dialog class="ct-dlg" id="ct-dlg" aria-label="How to answer this question"><div class="inner" id="ct-dlg-body"></div></dialog>
+  <p class="ct-note"><strong>Remember:</strong> a grey lamp means no concern was raised, not that the system is safe, and a yellow lamp means a concern was dealt with, not that it disappeared. This is a screening aid, not a legal assessment. Answers are not saved.</p>
+  <figcaption class="figcap" id="ct-cap"><b>Fig. 25:</b> Screening aid drawn from sections 01–08 of this guide. Standard flowchart symbols: rounded terminators (start and end), rectangles (checkpoints), diamonds (decision), D-shape (delay: held), wavy-bottomed sheet (document: what to note). Not a legal assessment.</figcaption>
+</figure>
+
           <p class="lead">A supermarket proposes a camera system that estimates which shoppers may need help at self-checkout. It might cut waiting and help staff respond sooner. It might also misread a customer, collect unnecessary images, affect groups differently or make shoppers feel watched. Work through the four prompts, then open the sample analysis.</p>
           <ol class="strip" style="grid-template-columns:repeat(4,minmax(0,1fr));margin:1.4rem 0">
             <li style="--hue:var(--ctx);--tint:var(--pale-gold)"><b>Name the decision</b><span>What does the system actually decide or recommend? What happens to a person because of it?</span></li>
@@ -1375,5 +1542,65 @@
       update();
     })();
   </script>
+  <script>
+(function(){
+  var DATA = [{"id": "A", "name": "Purpose and benefit", "qs": [{"n": 1, "q": "Will it make or shape a decision that matters to someone's life: work, money, care, safety, liberty?", "a": "Identify the decision, who it affects and what is at stake; plan review and a route to challenge.", "legal": false, "g": {"m": "Is the output used, directly or by someone acting on it, to decide something about a person's work, money, health, safety or freedom?", "ask": ["Follow the output: who acts on it, and what changes for the person?", "Could a wrong output cost someone a job, a loan, treatment, a place or their safety?", "Would the person notice, and could they undo it?"], "y": "A CV ranker that decides who gets an interview; a loan score; a hospital triage alert.", "n": "A spellchecker on internal drafts; a stock forecast with no person-level decisions.", "inv": ["Name the decision and who makes it.", "Rate how serious and how reversible a wrong result would be.", "Plan meaningful human review and a route to challenge."], "ref": "Sections 01 and 06"}}, {"n": 2, "q": "Could a simpler non-AI process do the job?", "a": "Compare with the non-AI option and record why AI is needed at all.", "legal": false, "g": {"m": "AI brings its own risks: opaque reasoning, bias learned from data, drift over time. If a rule, form, checklist or human check would meet the need, those risks may be unnecessary.", "ask": ["What exactly is the task?", "How is it done today, and what is actually wrong with that?", "Would a clear rule or checklist get most of the benefit?"], "y": "A model to flag late invoices when a simple date rule would do.", "n": "Sorting thousands of free-text complaints where fixed rules can't keep up.", "inv": ["Write down the non-AI option.", "Compare cost, accuracy and risk side by side.", "Record why AI is still the better choice, or drop it."], "ref": "Section 08 (risk review step 1)"}}, {"n": 3, "q": "Is the purpose vague, or likely to grow beyond what was agreed?", "a": "Write down purpose, users and excluded uses; agree who must approve any change of use.", "legal": false, "g": {"m": "An ethics review only covers the purpose it was done for. If the purpose is loose or likely to grow, the review stops matching what the system actually does.", "ask": ["Can you state the purpose in one sentence?", "Has anyone already asked for extra uses?", "Is there anything it must never be used for?"], "y": "\u201cTo improve efficiency\u201d with no named decision; a safety camera later used to measure staff productivity.", "n": "A written purpose, named users, listed excluded uses, and new uses need approval.", "inv": ["Write the purpose, users and excluded uses.", "Set an approval route for any new use.", "Run this track again for each new use."], "ref": "Section 08 (NIST Map)"}}, {"n": 4, "q": "Does most of the benefit go to the organisation while the cost falls on others?", "a": "Map who gains and who pays; plan how to share benefits or reduce the burden.", "legal": false, "g": {"m": "Cui bono? Cui damno? Benefits and costs can land on different people, and a positive total can hide an unfair split.", "ask": ["Who gains time, money, safety or convenience?", "Who pays in privacy, hours, errors, effort or dignity?", "Do the people who pay have any say?"], "y": "A factory saves on wages while workers lose shifts and gain monitoring.", "n": "Patients get faster deliveries and staff time is freed, with no job losses.", "inv": ["Map gains and costs for each group.", "Reduce, share or compensate the burden.", "Involve the people who pay in the decision."], "ref": "Sections 02 and 04"}}]}, {"id": "B", "name": "Data", "qs": [{"n": 5, "q": "Does it collect or use information about identifiable people?", "a": "Confirm the lawful basis, collect only needed fields, set access and retention.", "legal": true, "g": {"m": "Personal data is any information relating to an identifiable person. Not just names: ID numbers, email addresses, images, voices, location, device IDs, and combinations that point to someone.", "ask": ["Could you, or anyone else, link a record to a specific person?", "Are images, voices or locations captured?", "Does it include data about staff, customers or members of the public?"], "y": "CVs, camera footage, customer records.", "n": "Aggregated counts that cannot point to any individual.", "inv": ["Identify the lawful basis.", "Collect only the fields you need.", "Set access, security and retention, and tell people."], "ref": "Section 06. Legal trigger: check against the real facts."}}, {"n": 6, "q": "Is that information used automatically to evaluate or predict something about someone (profiling)?", "a": "Check profiling rules, tell people, and test predictions for accuracy.", "legal": true, "g": {"m": "Profiling is automated processing that evaluates or predicts something about a person: reliability, health, interests, behaviour, performance.", "ask": ["Does it produce a score, rank, category or prediction about an individual?", "Is that used to treat people differently?"], "y": "A credit score, a candidate ranking, a prediction of who will cancel a contract.", "n": "Counting footfall without tracking individuals.", "inv": ["Tell people it happens.", "Test predictions for accuracy and error types.", "Check which rules apply to this profiling."], "ref": "Section 06. Legal trigger."}}, {"n": 7, "q": "Does it use sensitive data (health, ethnicity, biometrics, religion, sexuality) or a stand-in for it, like a postcode?", "a": "Check special-category rules and test proxies for unfair effects.", "legal": false, "g": {"m": "Some data carries a higher risk of discrimination or harm: health, ethnicity, religion, sexuality, biometrics. Other fields can quietly stand in for them.", "ask": ["Is any special-category data present?", "Could postcode, name, school, employment gaps or purchases stand in for a protected trait?", "Do outputs differ between groups?"], "y": "Face images; a postcode feature in a loan model.", "n": "Fields have been checked for proxies and none carries a protected trait.", "inv": ["Check the special-category rules.", "Test whether suspected proxies change outcomes for groups.", "Remove the field, or record a justification."], "ref": "Sections 06 and 08"}}, {"n": 8, "q": "Could people be re-identified by combining fields, even with names removed?", "a": "Test re-identification risk; aggregate or drop fields.", "legal": false, "g": {"m": "Removing names is not anonymisation. Combinations such as postcode, birth date and gender can single people out.", "ask": ["Are there rare combinations of fields?", "Are some groups in a table very small?", "Could the data be matched against public sources?"], "y": "Patient data for a small village with age and postcode.", "n": "Data aggregated to groups large enough that nobody can be singled out.", "inv": ["Test how many records are unique.", "Aggregate, generalise or drop fields.", "Restrict who can access the data."], "ref": "Section 10 (checklist)"}}, {"n": 9, "q": "Is any data's origin, accuracy or permission to use unknown?", "a": "Trace provenance and permissions first; drop what you cannot verify.", "legal": false, "g": {"m": "If you can't say where data came from, how accurate it is, or whether you may use it, you can't rely on what the system learns from it.", "ask": ["Who collected it, when, how and for what?", "What licence or permission covers your use?", "How accurate is it, and how would you know?"], "y": "Scraped web data with no licence; an inherited spreadsheet with no history.", "n": "Documented source, date, method and licence.", "inv": ["Trace and document the source.", "Drop what you can't verify.", "Record known limits."], "ref": "Sections 08 (NIST Map) and 10"}}, {"n": 10, "q": "Are some groups missing or thin in the data?", "a": "Measure coverage, test results for missing groups and record the limits.", "legal": false, "g": {"m": "A system works best for the people it has seen. Groups that are missing or thin in the data are more likely to get wrong results.", "ask": ["Who is the system meant to work for?", "Are those groups present in enough numbers?", "Are ages, languages, disabilities or regions under-sampled?"], "y": "Speech data with few older speakers; hiring data mostly from one gender.", "n": "Coverage measured and adequate for every intended user group.", "inv": ["Measure coverage by group.", "Collect more data, or restrict where it is used.", "Test performance separately for each group."], "ref": "Sections 02 (inclusiveness) and 08"}}, {"n": 11, "q": "Is the system learning from past human decisions, such as who was hired before?", "a": "Check whether old decisions carry bias; reconsider the target label.", "legal": false, "g": {"m": "If the label the system learns from is a past human decision, it learns those people's patterns, including their biases.", "ask": ["What is the target label?", "Was it set by people's past decisions?", "Were those decisions fair and relevant to the task?"], "y": "\u201cHired / not hired\u201d as the target; past loan approvals.", "n": "A label measured independently of the decision-maker, such as a validated test result.", "inv": ["Examine historic outcomes by group.", "Reconsider what the label actually measures.", "Test whether old patterns are repeated."], "ref": "Section 08 (hiring example)"}}]}, {"id": "C", "name": "Decisions and oversight", "qs": [{"n": 12, "q": "Is a consequential decision made without meaningful human involvement (solely automated)?", "a": "Check the UK GDPR safeguards: information, representations, human intervention, a way to contest.", "legal": true, "g": {"m": "A decision is solely automated if no person meaningfully takes part before it takes effect. A simple rule can do this without any AI.", "ask": ["Does any person see the case before it affects someone?", "Can they change the result?", "Do they actually examine it?"], "y": "A loan refused automatically below a score threshold.", "n": "A trained reviewer assesses every refusal with power to change it.", "inv": ["If the decision is significant, check the UK GDPR safeguards: information, representations, human intervention, a way to contest.", "Check the law against the real facts.", "Decide whether to add genuine human review."], "ref": "Section 06. Legal trigger."}}, {"n": 13, "q": "Would a human reviewer lack the time, information or authority to overrule it?", "a": "Give reviewers the case, time and authority; monitor how often they override.", "legal": false, "g": {"m": "A person in the workflow isn't the same as a person in control. Without time, information and authority, review becomes a rubber stamp.", "ask": ["How many cases does a reviewer handle an hour?", "Do they see the case, or only the score?", "Can they overrule it without penalty?"], "y": "A reviewer sees only \u201cdecline\u201d and approves hundreds an hour.", "n": "A reviewer sees the case and reasons, has time, and overrides are tracked without penalty.", "inv": ["Redesign the screen, workload and authority.", "Track override rates.", "Train reviewers on the system's limits."], "ref": "Section 06"}}, {"n": 14, "q": "Is the output likely to be treated as proof rather than a prompt (automation bias)?", "a": "Design the output as a prompt, train staff and check for rubber-stamping.", "legal": false, "g": {"m": "People tend to defer to a system that looks objective. That is automation bias.", "ask": ["Is the output shown as a verdict (\u201cfraud\u201d, \u201chigh risk\u201d) or as a reason to look?", "Do staff trust it more than their own checks?", "Is there pressure to act fast?"], "y": "A shoplifting alert treated as proof.", "n": "An alert framed as \u201ccheck this\u201d, with trained staff and outcome checks.", "inv": ["Reword the output as a prompt.", "Train staff.", "Audit how often alerts are acted on without checks."], "ref": "Sections 06 and 10"}}]}, {"id": "D", "name": "People affected", "qs": [{"n": 15, "q": "Could errors fall more heavily on some groups than others?", "a": "Compare error rates across relevant groups and set limits that trigger a pause.", "legal": false, "g": {"m": "Overall accuracy can hide uneven errors. One group may be wrongly flagged or missed far more often than another.", "ask": ["Has error been measured separately for relevant groups?", "Which errors matter more here: false yes or false no?", "Who is hurt by each?"], "y": "A ranker that rejects more qualified women than men.", "n": "Error rates tested by group, within agreed limits, and re-tested over time.", "inv": ["Compare error types by group.", "Set limits that trigger a pause.", "Fix the cause or narrow the use."], "ref": "Section 08 (NIST Measure)"}}, {"n": 16, "q": "Could people be affected without knowing AI was involved?", "a": "Tell people AI is involved and what role it plays.", "legal": false, "g": {"m": "People can't question something they don't know is happening.", "ask": ["Is there a notice where people meet the system?", "Would an applicant know a tool ranked them?"], "y": "A chatbot presented as a person; hidden scoring.", "n": "A clear notice at the point of use explaining the system's role.", "inv": ["Tell people when and how AI is used.", "Explain its role in plain language."], "ref": "Section 02 (OECD transparency)"}}, {"n": 17, "q": "Would an affected person be unable to understand, correct or challenge the result?", "a": "Provide a usable route to explanation, correction and appeal.", "legal": false, "g": {"m": "If a result can affect someone, they need a way to understand it, correct wrong data and reach a competent person.", "ask": ["Is there a named route to ask why?", "Can people see and correct their data?", "Who reviews challenges, and how fast?"], "y": "\u201cThe computer says no\u201d with no contact.", "n": "An explanation of the main factors, plus correction and appeal routes to a competent person.", "inv": ["Build explanation, correction and appeal routes.", "Track challenges and outcomes.", "Fix repeated causes, not just individual cases."], "ref": "Section 06"}}, {"n": 18, "q": "Were the people affected left out of design and testing?", "a": "Involve them in design and testing; record what they say and what changed.", "legal": false, "g": {"m": "The people who live with a system often see problems the builders miss.", "ask": ["Who will live with the outputs?", "Did any of them test it or comment on the design?", "Did their feedback change anything?"], "y": "A hospital robot tested only by engineers.", "n": "Patients, staff or applicants involved, with feedback and changes recorded.", "inv": ["Involve affected people in design and testing.", "Record what they said and what changed."], "ref": "Sections 02 and 08"}}, {"n": 19, "q": "Does it change anyone's job, pace of work or level of monitoring?", "a": "Run a job-impact assessment, consult workers and limit monitoring.", "legal": false, "g": {"m": "Automation can change jobs in ways the efficiency figures don't show: fewer hours, faster pace, closer monitoring.", "ask": ["Will tasks, hours or roles change?", "Will work become faster or more closely watched?", "Were workers consulted?"], "y": "A robot arm installed together with a pause-tracking dashboard.", "n": "A tool that supports staff with no change to hours or monitoring, confirmed with them.", "inv": ["Run a job-impact assessment.", "Consult workers.", "Limit monitoring and fund training."], "ref": "Section 04"}}]}, {"id": "E", "name": "Safety and robustness", "qs": [{"n": 20, "q": "Could a failure cause physical or psychological harm?", "a": "Assess hazards, set stop conditions and plan incident response.", "legal": false, "g": {"m": "Some failures are an inconvenience; others can injure, endanger or distress someone.", "ask": ["What happens if it's wrong, late or stops?", "Could anyone be injured, endangered or seriously distressed?"], "y": "A medication delivery robot; a triage alert.", "n": "Failure only causes an inconvenience that is easily corrected.", "inv": ["Assess hazards.", "Set stop conditions.", "Write and rehearse an incident plan."], "ref": "Section 05; NIST trustworthy AI: Safe"}}, {"n": 21, "q": "Has it only been tested in a demo or lab, not the real setting?", "a": "Pilot in real conditions with monitoring before scaling up.", "legal": false, "g": {"m": "Results in a lab or demo often don't hold in the real setting: different people, lighting, workload, devices and data.", "ask": ["Where was it tested?", "Were the users, devices, conditions and data the same as real use?"], "y": "A delivery robot demoed on an empty corridor.", "n": "A monitored pilot in the real setting.", "inv": ["Pilot in real conditions.", "Monitor closely, with a stop rule."], "ref": "Sections 05 and 08"}}, {"n": 22, "q": "Is there no tested way to pause it, override it or switch to a manual fallback?", "a": "Build and test pause, override and a manual fallback.", "legal": false, "g": {"m": "If something goes wrong, people need to stop it, correct it and carry on safely without it.", "ask": ["Who can pause it, and how quickly?", "Is there a manual process?", "Has it been rehearsed?"], "y": "No manual process exists if the system fails.", "n": "Pause tested, and staff know the fallback.", "inv": ["Build a pause and an override.", "Write the manual fallback.", "Rehearse it."], "ref": "Section 02 (reversibility)"}}, {"n": 23, "q": "Could it be attacked, misused or used outside its intended purpose?", "a": "Assess security and misuse; set and enforce boundaries on use.", "legal": false, "g": {"m": "Systems can be manipulated, leak data, or be used for purposes they weren't built for.", "ask": ["Could inputs be manipulated to change outputs?", "Could data or the model leak?", "Could it be used for something it wasn't built for?"], "y": "A public chatbot with access to customer records.", "n": "A threat assessment done, with access controls and use limits.", "inv": ["Assess security and misuse.", "Limit access and use.", "Monitor for misuse."], "ref": "Section 02 (OECD robustness); NIST secure and resilient"}}]}, {"id": "F", "name": "Responsibility and law", "qs": [{"n": 24, "q": "Is there no named person who owns it, monitors it and can stop it?", "a": "Name the owner, the monitor and the person with authority to stop it.", "legal": false, "g": {"m": "\u201cThe team\u201d or \u201cthe algorithm\u201d can't be held to account. Someone must own it.", "ask": ["Who approved it?", "Who monitors it?", "Who can stop it, by name?"], "y": "\u201cIT looks after it.\u201d", "n": "A named owner, a named monitor and a named person with authority to stop it.", "inv": ["Name the owner, the monitor and the stop authority.", "Give them the time and power to act."], "ref": "Sections 02 and 08"}}, {"n": 25, "q": "Does it depend on a supplier's model, data or updates you can't inspect?", "a": "Agree supplier documentation, testing and update terms; plan for supplier change.", "legal": false, "g": {"m": "If a supplier's model or data is a black box, you can't check what you're relying on, or notice when it changes.", "ask": ["Do you know what data and tests the supplier used?", "Will they tell you about updates?", "Can you test it on your own data?"], "y": "A black-box API that changes without notice.", "n": "Documentation, the right to test, and update notice written into the contract.", "inv": ["Agree documentation, testing and update terms.", "Test it yourself.", "Plan for the supplier changing or leaving."], "ref": "Section 08 (NIST)"}}, {"n": 26, "q": "Does the EU AI Act class its intended use as high-risk?", "a": "Check AI Act obligations and dates for this intended use.", "legal": true, "g": {"m": "The EU AI Act lists high-risk use areas, such as some uses in employment and education. It's a separate EU test from UK data protection.", "ask": ["Will it be used in the EU, or affect people there?", "Is the intended use in a listed high-risk area?"], "y": "CV screening for jobs in the EU (check the actual listing).", "n": "Not used in or for the EU, or clearly outside the listed areas (check).", "inv": ["Check obligations and dates against the Act.", "Take advice; the dates have changed."], "ref": "Section 06. Legal trigger."}}, {"n": 27, "q": "Will it be used in a different country, population or language from the one it was built for?", "a": "Re-test in the new setting and check local rules and data transfer.", "legal": false, "g": {"m": "A system built and tested for one setting may not work, or may not be lawful, in another.", "ask": ["Was it built and tested in this country, language and population?", "Do the rules differ here?"], "y": "A model trained on US applicants used for UK applicants.", "n": "Built and tested for this setting.", "inv": ["Re-test locally.", "Check local law and data-transfer rules."], "ref": "Section 08 (OECD cooperation)"}}]}];
+  var st = {}; DATA.forEach(function(g){ g.qs.forEach(function(q){ st[q.n] = {a:null, r:false}; }); });
+  var active = 'A', sel = null;
+  var track = document.getElementById('ct-track'), tabs = document.getElementById('ct-tabs'), qs = document.getElementById('ct-qs');
+  function lampCls(n){ var s = st[n]; return 'lamp' + (s.a==='yes'?' yes':'') + (s.a==='no'?' no':'') + (s.a==='yes'&&s.r?' rev':'') + (sel===n?' sel':''); }
+  function gstat(g){ var held=0, ans=0; g.qs.forEach(function(q){ var s=st[q.n]; if(s.a) ans++; if(s.a==='yes'&&!s.r) held++; }); return {held:held, ans:ans, all:ans===g.qs.length}; }
+  function render(){
+    var tot={un:0,yes:0,rev:0,no:0};
+    Object.keys(st).forEach(function(k){ var s=st[k]; if(!s.a) tot.un++; else if(s.a==='no') tot.no++; else if(s.r) tot.rev++; else tot.yes++; });
+    document.getElementById('ct-c-un').textContent=tot.un; document.getElementById('ct-c-yes').textContent=tot.yes;
+    document.getElementById('ct-c-rev').textContent=tot.rev; document.getElementById('ct-c-no').textContent=tot.no;
+    track.innerHTML = DATA.map(function(g){
+      var s=gstat(g), cls = s.held? 'held' : (s.all? 'clear' : '');
+      var out = s.held ? 'Yes → held' : (s.all ? 'No → continue' : 'Waiting');
+      var notes = g.qs.filter(function(q){ return st[q.n].a==='yes' && !st[q.n].r; }).map(function(q){ return '<p>Q'+q.n+': '+q.a+'</p>'; }).join('');
+      return '<div class="ct-col '+cls+'"><div class="ct-box'+(active===g.id?' active':'')+'" data-g="'+g.id+'" role="button" tabindex="0" aria-label="Checkpoint '+g.id+', '+g.name+'"><h4><small>Checkpoint '+g.id+'</small>'+g.name+'</h4><div class="ct-lamps">'+
+        g.qs.map(function(q){ return '<button class="'+lampCls(q.n)+'" data-q="'+q.n+'" data-g="'+g.id+'" aria-label="Question '+q.n+': '+(st[q.n].a||'unanswered')+(st[q.n].r?', reviewed':'')+'" title="Q'+q.n+': '+q.q.replace(/"/g,'&quot;')+'">'+q.n+'</button>'; }).join('')+
+        '</div></div><div class="ct-link"></div><div class="ct-dia"><span>Any<br>orange?</span></div><div class="ct-out">'+out+'</div>'+
+        '<div class="ct-delay">Held: '+s.held+' to review</div><div class="ct-doc"><div class="sheet"><b>Note and check</b>'+notes+'</div><svg viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true"><path d="M0 0V5Q12.5 10 25 5T50 5T75 5T100 5V0" fill="#fff" stroke="#8f3510" stroke-width="1.5" vector-effect="non-scaling-stroke"/></svg></div></div>';
+    }).join('');
+    var heldAll = DATA.reduce(function(t,g){ return t+gstat(g).held; },0);
+    var end = document.getElementById('ct-end'); end.classList.toggle('held', heldAll>0);
+    document.getElementById('ct-end-msg').textContent = heldAll>0 ? heldAll+' orange lamp'+(heldAll>1?'s':'')+' still to investigate and record' : (tot.un>0 ? tot.un+' question'+(tot.un>1?'s':'')+' not yet answered' : 'All flags reviewed; the owner still makes the call');
+    tabs.innerHTML = DATA.map(function(g){ var h=gstat(g).held; return '<button role="tab" aria-selected="'+(active===g.id)+'" data-g="'+g.id+'">'+g.id+' · '+g.name+'<i>'+(h||'')+'</i></button>'; }).join('');
+    var g = DATA.filter(function(x){ return x.id===active; })[0];
+    qs.innerHTML = g.qs.map(function(q){ var s=st[q.n];
+      return '<li class="ct-q'+(s.a==='yes'?' yes':'')+(s.a==='yes'&&s.r?' rev':'')+'" id="ct-q'+q.n+'"><button class="'+lampCls(q.n)+'" data-q="'+q.n+'" data-g="'+g.id+'" tabindex="-1" aria-hidden="true">'+q.n+'</button>'+
+        '<div class="qt">'+q.q+(q.legal?'<small>legal trigger</small>':'')+'<button class="ct-help" type="button" data-help="'+q.n+'">How do I answer this?</button></div>'+
+        '<div class="ct-yn"><button class="y" data-q="'+q.n+'" data-v="yes" aria-pressed="'+(s.a==='yes')+'">Yes</button><button class="n" data-q="'+q.n+'" data-v="no" aria-pressed="'+(s.a==='no')+'">No</button></div>'+
+        '<div class="ct-act"><span><strong>Note and check:</strong> '+q.a+'</span><label><input type="checkbox" data-r="'+q.n+'"'+(s.r?' checked':'')+'> Investigated and recorded</label></div></li>'; }).join('');
+  }
+  var dlg = document.getElementById('ct-dlg'), dbody = document.getElementById('ct-dlg-body');
+  var ALL = {}; DATA.forEach(function(g){ g.qs.forEach(function(q){ ALL[q.n]=q; }); });
+  function li(a){ return a.map(function(x){ return '<li>'+x+'</li>'; }).join(''); }
+  function openHelp(n){ var q=ALL[n], g=q.g;
+    dbody.innerHTML = '<p class="dq"><span class="lamp '+(st[n].a==='yes'?(st[n].r?'yes rev':'yes'):(st[n].a==='no'?'no':''))+'">'+n+'</span><strong>'+q.q+'</strong></p>'+
+      '<h4>What it means</h4><p>'+g.m+'</p><h4>Ask yourself</h4><ul>'+li(g.ask)+'</ul>'+
+      '<div class="dyn"><div class="dy"><b>Likely yes</b>'+g.y+'</div><div class="dn"><b>Likely no</b>'+g.n+'</div></div>'+
+      '<h4>If the answer is yes, investigate</h4><ol>'+li(g.inv)+'</ol><p class="dref">See: '+g.ref+'</p>'+
+      '<div class="dbtns"><button class="y" data-v="yes" data-q="'+n+'" data-close="1">Answer Yes</button><button class="n" data-v="no" data-q="'+n+'" data-close="1">Answer No</button><button class="x" data-close="1">Close</button></div>';
+    if(dlg.showModal) dlg.showModal(); else dlg.setAttribute('open','');
+  }
+  document.addEventListener('click', function(e){
+    var h = e.target.closest('[data-help]'); if(h){ openHelp(+h.dataset.help); return; }
+    var cl = e.target.closest('[data-close]'); if(cl && !cl.dataset.v){ dlg.close(); return; }
+    if(e.target===dlg){ dlg.close(); return; }
+    var t = e.target.closest('[data-v],[data-q],[data-g]'); if(!t) return;
+    if(t.dataset.close){ dlg.close(); }
+    if(t.dataset.v){ var n=+t.dataset.q; st[n].a = (st[n].a===t.dataset.v)? null : t.dataset.v; if(st[n].a!=='yes') st[n].r=false; sel=n; render(); return; }
+    if(t.dataset.q){ sel=+t.dataset.q; active=t.dataset.g; render(); var el=document.getElementById('ct-q'+sel); if(el) el.scrollIntoView({block:'nearest'}); return; }
+    if(t.dataset.g){ active=t.dataset.g; render(); }
+  });
+  document.addEventListener('change', function(e){ if(e.target.dataset.r){ st[+e.target.dataset.r].r = e.target.checked; render(); } });
+  document.addEventListener('keydown', function(e){ var t=e.target; if((e.key==='Enter'||e.key===' ') && t.classList && t.classList.contains('ct-box')){ e.preventDefault(); active=t.dataset.g; render(); } });
+  document.getElementById('ct-reset').addEventListener('click', function(){ Object.keys(st).forEach(function(k){ st[k]={a:null,r:false}; }); sel=null; active='A'; render(); });
+  render();
+})();
+</script>
 </body>
 </html>
