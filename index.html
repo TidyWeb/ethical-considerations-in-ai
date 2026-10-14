@@ -1,0 +1,1264 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A visual companion to the Code Institute lesson on ethical considerations in AI: principles, dilemmas, work, care, data decisions, military control, governance and NIST/OECD risk frameworks.">
+  <title>AI Ethics — a practical overview</title>
+  <style>
+    @font-face { font-family:'Liberation Sans'; font-style:normal; font-weight:400; font-display:swap; src:url('assets/fonts/liberation-sans-regular.woff2') format('woff2'); }
+    @font-face { font-family:'Liberation Sans'; font-style:normal; font-weight:700; font-display:swap; src:url('assets/fonts/liberation-sans-bold.woff2') format('woff2'); }
+    @font-face { font-family:'Liberation Sans'; font-style:italic; font-weight:400; font-display:swap; src:url('assets/fonts/liberation-sans-italic.woff2') format('woff2'); }
+    @font-face { font-family:'Liberation Sans'; font-style:italic; font-weight:700; font-display:swap; src:url('assets/fonts/liberation-sans-bold-italic.woff2') format('woff2'); }
+    @font-face { font-family:'DM Mono'; font-style:normal; font-weight:400; font-display:swap; src:url('assets/fonts/dm-mono-400.woff2') format('woff2'); }
+    @font-face { font-family:'DM Mono'; font-style:normal; font-weight:500; font-display:swap; src:url('assets/fonts/dm-mono-500.woff2') format('woff2'); }
+
+    /* ---------- tokens: NIST AI RMF palette on warm drafting paper ---------- */
+    :root {
+      --ink:#1b2838; --body:#24384c; --quiet:#4f6273; --rule:#c9c3b3; --rule-soft:#ddd6c5;
+      --paper:#f5efe0; --sheet:#fffdf7; --grid:rgb(31 61 99 / .06); --grid-major:rgb(31 61 99 / .11);
+      --navy:#1f3d63; --slate:#44607e; --frame:#4a6584;
+      --govern:#3d9bd3; --map:#2fb39a; --measure:#e3a32b; --manage:#24467a;
+      --ctx:#e2a12b; --data:#1a9fdc; --model:#2fb48f; --task:#3d5a7c; --planet:#8b8886;
+      --gold:#e3a32b; --gold-ink:#8a5a00; --teal-ink:#08715f; --blue-ink:#0b5ea8;
+      --pale-blue:#e4f1f9; --pale-teal:#e1f4ee; --pale-gold:#fbefd4; --pale-navy:#e6ebf2; --pale-grey:#eeece7;
+      --warn-bg:#fdf1c7; --warn-line:#e9b913;
+      --sans:'Liberation Sans',Arial,sans-serif; --mono:'DM Mono',ui-monospace,monospace;
+      --r:14px;
+    }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; color:var(--body); background:var(--paper); font:17px/1.6 var(--sans); }
+    a { color:var(--blue-ink); text-decoration-thickness:.07em; text-underline-offset:.16em; }
+    a:hover { color:var(--gold-ink); }
+    h1,h2,h3,h4,p { margin-top:0; }
+    h1,h2,h3,h4 { color:var(--navy); font-weight:700; }
+    h1 { max-width:15ch; margin-bottom:1.1rem; font-size:clamp(2.7rem,6.2vw,5.6rem); line-height:.98; letter-spacing:-.035em; }
+    h2 { max-width:24ch; margin-bottom:.9rem; font-size:clamp(1.9rem,3.6vw,3.1rem); line-height:1.06; letter-spacing:-.025em; }
+    h3 { margin:2.4rem 0 .6rem; font-size:1.32rem; line-height:1.25; }
+    h4 { margin-bottom:.4rem; font-size:1.02rem; line-height:1.25; }
+    strong { color:var(--ink); }
+    .skip { position:fixed; z-index:20; top:-5rem; left:1rem; padding:.7rem 1rem; color:var(--ink); background:var(--gold); }
+    .skip:focus { top:1rem; }
+    .sr { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+
+    /* ---------- shell ---------- */
+    .layout { display:grid; grid-template-columns:16rem minmax(0,1fr); min-height:100vh; }
+    .rail { position:sticky; top:0; display:flex; flex-direction:column; height:100vh; overflow-y:auto; padding:1.1rem .9rem 1rem; color:#eef1f4; background:var(--ink); }
+    .brand { display:flex; align-items:center; gap:.7rem; padding-bottom:1rem; border-bottom:1px solid #3a4a5c; color:inherit; text-decoration:none; }
+    .brand-mark { position:relative; display:grid; flex:none; place-items:center; width:2.7rem; aspect-ratio:1; border-radius:50%; background:conic-gradient(var(--map) 0 33%, var(--measure) 0 66%, var(--manage) 0); }
+    .brand-mark::after { position:absolute; inset:.38rem; border-radius:50%; background:var(--govern); content:""; }
+    .brand-mark b { position:relative; z-index:1; color:#fff; font:700 .62rem var(--sans); letter-spacing:.04em; }
+    .brand small { display:block; color:#9fb4c8; font:.56rem var(--mono); letter-spacing:.08em; text-transform:uppercase; }
+    .brand strong { display:block; margin-top:.15rem; color:#fff; font-size:.86rem; line-height:1.15; }
+    .nav-toggle { display:none; }
+    .rail nav { margin-top:1.1rem; }
+    .rail-label { margin:0 0 .5rem .3rem; color:#9fb4c8; font:.56rem var(--mono); letter-spacing:.08em; text-transform:uppercase; }
+    .rail ol { margin:0; padding:0; list-style:none; }
+    .rail li a { display:grid; grid-template-columns:1.7rem 1fr; gap:.3rem; padding:.42rem .4rem; border-left:3px solid transparent; color:#d7dee6; font-size:.76rem; line-height:1.25; text-decoration:none; }
+    .rail li a span { color:var(--map); font:500 .64rem/1.5 var(--mono); }
+    .rail li a:hover,.rail li a:focus-visible { color:#fff; background:#26364a; outline:none; }
+    .rail li a[aria-current="true"] { border-left-color:var(--gold); color:#fff; background:#26364a; font-weight:700; }
+    .rail li a[aria-current="true"] span { color:var(--gold); }
+    .rail-sub { margin:.1rem 0 .3rem 2.1rem !important; }
+    .rail-sub a { grid-template-columns:.7rem 1fr !important; padding:.2rem .4rem !important; font-size:.68rem !important; }
+    .rail-sub a::before { width:.45rem; height:.45rem; margin-top:.38rem; border-radius:50%; background:var(--dot,#9fb4c8); content:""; }
+    .rail-note { margin:1rem .3rem; color:#a9b6c3; font-size:.7rem; }
+    .credit { display:flex; align-items:center; gap:.6rem; margin-top:auto; padding:.8rem .2rem 0; border-top:1px solid #3a4a5c; color:#c9d2db; font-size:.66rem; line-height:1.3; text-decoration:none; }
+    .credit img { width:2.1rem; height:2.1rem; object-fit:contain; filter:grayscale(1) brightness(1.5); }
+    .credit:hover { color:#fff; }
+    main { min-width:0; background-color:var(--paper);
+      background-image:linear-gradient(var(--grid-major) 1px,transparent 1px),linear-gradient(90deg,var(--grid-major) 1px,transparent 1px),linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+      background-size:120px 120px,120px 120px,24px 24px,24px 24px; }
+    .topline { display:flex; justify-content:space-between; gap:1rem; padding:.6rem clamp(1rem,4vw,4rem); color:#dfe6ed; background:var(--navy); font:.6rem var(--mono); letter-spacing:.08em; text-transform:uppercase; }
+    .topline span:last-child { color:#9fe0d1; }
+    .wrap { max-width:76rem; margin:0 auto; padding:0 clamp(1rem,4vw,4rem); }
+    .measure { max-width:46rem; }
+
+    /* ---------- hero ---------- */
+    .hero { padding:clamp(2.6rem,6vw,5rem) 0 2.2rem; }
+    .eyebrow { margin-bottom:.8rem; color:var(--teal-ink); font:500 .68rem var(--mono); letter-spacing:.09em; text-transform:uppercase; }
+    .lede { max-width:44rem; color:var(--body); font-size:clamp(1.08rem,1.5vw,1.3rem); line-height:1.5; }
+    .motto { margin:1.8rem 0 0; padding:.35rem 0 .35rem 1.1rem; border-left:5px solid var(--gold); }
+    .motto p { margin:0; }
+    .motto p[lang="la"] { color:var(--navy); font-size:clamp(1.6rem,3.2vw,2.4rem); font-weight:700; letter-spacing:.01em; line-height:1.15; }
+    .motto .motto-en { margin-top:.3rem; color:var(--quiet); font-size:1.05rem; font-style:italic; }
+    .notice { display:grid; grid-template-columns:1.6rem 1fr; gap:.55rem; max-width:52rem; margin:1.5rem 0 0; padding:.75rem 1rem; border-left:4px solid var(--warn-line); background:var(--warn-bg); font-size:.86rem; }
+    .notice::before { color:var(--ink); content:"⚠"; font-size:1.05rem; line-height:1.35; }
+    .notice p { margin:0; }
+    .meta { display:flex; flex-wrap:wrap; gap:.4rem; margin-top:1.1rem; }
+    .meta span { padding:.3rem .55rem; border:1px solid var(--rule); border-radius:99px; background:var(--sheet); color:var(--quiet); font:.6rem var(--mono); letter-spacing:.05em; text-transform:uppercase; }
+
+    /* ---------- plates (NIST-style framed figures) ---------- */
+    figure { margin:0; }
+    .plate { position:relative; margin:2.4rem 0 1.6rem; padding:2.1rem clamp(.8rem,2.4vw,1.6rem) 1.2rem; border:2px solid var(--frame); border-radius:22px; background:var(--sheet); box-shadow:0 1px 0 rgb(27 40 56 / .05); }
+    .plate-title { position:absolute; top:0; left:50%; max-width:calc(100% - 2rem); margin:0; padding:.32rem 1.05rem; border:2px solid var(--frame); border-radius:12px; color:var(--ink); background:var(--sheet); font-size:.98rem; font-weight:700; line-height:1.25; text-align:center; transform:translate(-50%,-55%); }
+    .figcap { max-width:60rem; margin:1.1rem auto 0; padding-top:.7rem; border-top:1px solid var(--rule-soft); color:#4c5a66; font-size:.78rem; font-style:italic; font-variant:small-caps; letter-spacing:.02em; line-height:1.45; text-align:center; }
+    .figcap b { font-style:italic; font-variant:small-caps; }
+    .figcap.plain { font-variant:normal; letter-spacing:0; }
+
+    /* panel with navy header (NIST Figure 1 vocabulary) */
+    .panels { position:relative; display:grid; gap:2.2rem; }
+    .panels.c3 { grid-template-columns:repeat(3,minmax(0,1fr)); }
+    .panels.c4 { grid-template-columns:repeat(4,minmax(0,1fr)); gap:1.6rem; }
+    .panel { position:relative; z-index:1; display:flex; flex-direction:column; min-width:0; border:1px solid #b9c4cd; border-radius:var(--r); overflow:hidden; background:#fff; box-shadow:0 2px 6px rgb(27 40 56 / .09); }
+    .panel > header { display:flex; align-items:center; justify-content:center; min-height:3.5rem; padding:.6rem .8rem; color:#fff; background:var(--slate); text-align:center; }
+    .panel > header h4 { margin:0; color:#fff; font-size:1rem; }
+    .panel .body { flex:1; padding:.85rem .95rem 1rem; font-size:.86rem; }
+    .panel .body p { margin:0 0 .55rem; }
+    .panel .body p:last-child { margin-bottom:0; }
+    .panel ul { margin:0; padding-left:1.05rem; }
+    .panel li { margin:.35rem 0; }
+    .panel li::marker { color:var(--gold); }
+    .panel .ask { margin-top:.7rem !important; padding-top:.6rem; border-top:1px dashed var(--rule); color:var(--ink); }
+    /* gold connector bars between panels */
+    .panels.linked .panel:not(:last-child)::after,.panels.linked .panel:not(:last-child)::before { position:absolute; z-index:-1; right:-2.25rem; width:2.3rem; height:4px; background:var(--gold); content:""; }
+    .panels.linked .panel:not(:last-child)::after { top:38%; }
+    .panels.linked .panel:not(:last-child)::before { top:72%; }
+    .panels.c4.linked .panel:not(:last-child)::after,.panels.c4.linked .panel:not(:last-child)::before { right:-1.65rem; width:1.7rem; }
+    .panels.linked .panel { overflow:visible; }
+    .panels.linked .panel > header { border-radius:calc(var(--r) - 1px) calc(var(--r) - 1px) 0 0; }
+
+    /* coloured column matrix (NIST Figure 3 vocabulary) */
+    .matrix { display:grid; gap:.5rem; }
+    .mcol { display:flex; flex-direction:column; min-width:0; border-radius:12px; overflow:hidden; background:var(--tint,#f1f1f1); }
+    .mcol > .mhead { position:relative; padding:.7rem .6rem; color:#fff; background:var(--hue,#555); font-weight:700; line-height:1.2; text-align:center; }
+    .mcol > .mhead small { display:block; margin-top:.15rem; font:500 .58rem var(--mono); letter-spacing:.06em; opacity:.9; text-transform:uppercase; }
+    .mcol > .mcell { padding:.6rem .7rem; border-top:1px solid rgb(255 255 255 / .8); font-size:.78rem; line-height:1.4; }
+    .mcell .rowlab { display:block; margin-bottom:.2rem; color:var(--quiet); font:500 .56rem var(--mono); letter-spacing:.07em; text-transform:uppercase; }
+    .mcell.hire { border-top:2px solid var(--ink); background:rgb(255 255 255 / .72); }
+    .mcell.hire .rowlab { color:var(--ink); }
+    .mcol.dark > .mhead { color:var(--ink); }
+
+    /* chevron / step strip */
+    .strip { display:grid; gap:.35rem; margin:0; padding:0; list-style:none; counter-reset:st; }
+    .strip > li { position:relative; padding:.75rem .9rem .8rem 1rem; background:var(--tint,var(--pale-navy)); counter-increment:st; }
+    .strip > li b { display:block; color:var(--ink); }
+    .strip > li span { display:block; margin-top:.2rem; font-size:.8rem; line-height:1.4; }
+    .strip > li::before { display:block; margin-bottom:.3rem; color:var(--hue,var(--navy)); content:counter(st,decimal-leading-zero); font:500 .64rem var(--mono); }
+    .strip.chev > li { padding-right:1.6rem; clip-path:polygon(0 0,calc(100% - 14px) 0,100% 50%,calc(100% - 14px) 100%,0 100%,14px 50%); padding-left:1.6rem; }
+    .strip.chev > li:first-child { clip-path:polygon(0 0,calc(100% - 14px) 0,100% 50%,calc(100% - 14px) 100%,0 100%); padding-left:1rem; }
+
+    /* badges */
+    .badge { display:inline-grid; place-items:center; width:2.4rem; aspect-ratio:1; border:3px solid #fff; border-radius:50%; color:#fff; background:var(--hue,var(--navy)); box-shadow:0 0 0 2px var(--hue,var(--navy)); font:700 .78rem var(--sans); }
+    .badge svg { width:1.15rem; height:1.15rem; }
+    .tag { display:inline-block; margin-bottom:.5rem; padding:.18rem .45rem; border:1px solid currentColor; border-radius:4px; color:var(--hue,var(--slate)); font:500 .58rem var(--mono); letter-spacing:.07em; text-transform:uppercase; }
+
+    /* ---------- sections ---------- */
+    section.sec { padding:4.2rem 0 3.4rem; border-top:3px solid var(--ink); scroll-margin-top:.5rem; }
+    .sec-head { display:grid; grid-template-columns:4.4rem minmax(0,1fr); gap:1.2rem; align-items:start; margin-bottom:1.4rem; }
+    .sec-num { display:grid; place-items:center; width:4.1rem; aspect-ratio:1; border:4px solid var(--sheet); border-radius:50%; color:#fff; background:var(--navy); box-shadow:0 0 0 2px var(--navy); font:700 1.35rem var(--sans); }
+    .sec-num small { display:block; margin-top:-.15rem; font:500 .48rem var(--mono); letter-spacing:.1em; }
+    .lead { max-width:48rem; color:var(--body); font-size:1.07rem; }
+    .prose { max-width:48rem; }
+    .prose p,.prose li { max-width:48rem; }
+    .src { margin:2rem 0 0; padding:.85rem 1rem; border:1px solid var(--rule); border-left:4px solid var(--govern); background:var(--sheet); font-size:.8rem; }
+    .src strong { color:var(--navy); }
+    .note { max-width:52rem; margin:1.3rem 0; padding:.85rem 1rem; border-left:4px solid var(--gold); background:var(--pale-gold); font-size:.88rem; }
+    .worked { position:relative; max-width:56rem; margin:1.8rem 0; padding:1.3rem 1.3rem 1.2rem; border:2px solid var(--navy); border-radius:4px; background:var(--sheet); }
+    .worked .wlabel { position:absolute; top:-.8rem; left:1rem; padding:.15rem .55rem; color:#fff; background:var(--navy); font:500 .6rem var(--mono); letter-spacing:.07em; text-transform:uppercase; }
+    .worked h4 { margin-top:.2rem; font-size:1.15rem; }
+    .worked p { font-size:.94rem; }
+    .worked > :last-child { margin-bottom:0; }
+    .grid2 { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.9rem; margin:1.2rem 0; }
+    .card { min-width:0; padding:1rem 1.05rem; border:1px solid #c3ccd3; border-top:4px solid var(--hue,var(--slate)); border-radius:6px; background:#fff; }
+    .card h4 { color:var(--navy); }
+    .card p { margin-bottom:.5rem; font-size:.88rem; }
+    .card p:last-child { margin-bottom:0; }
+    .card ul { margin:.45rem 0 .5rem; padding-left:1.1rem; font-size:.85rem; }
+    .card li { margin:.3rem 0; }
+    .scroll-table { overflow-x:auto; margin:1.2rem 0; border-radius:8px; }
+    .scroll-table:focus-visible { outline:2px solid var(--govern); outline-offset:3px; }
+    table { width:100%; min-width:38rem; border-collapse:collapse; background:#fff; font-size:.84rem; }
+    caption { padding:.5rem 0; color:var(--quiet); font-size:.78rem; font-style:italic; text-align:left; }
+    th,td { padding:.7rem .75rem; border:1px solid #d3d9de; text-align:left; vertical-align:top; }
+    th { color:#fff; background:var(--slate); font-weight:700; font-size:.8rem; }
+    tbody tr:nth-child(even) td { background:#f7f9fa; }
+    td:first-child { color:var(--navy); font-weight:700; }
+
+    /* hero figure: where ethics enters */
+    .chain { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:1.6rem; }
+    .chain .panel > header { min-height:3rem; }
+    .chain .panel:nth-child(1) > header { background:var(--planet); }
+    .chain .panel:nth-child(2) > header { background:var(--data); }
+    .chain .panel:nth-child(3) > header { background:var(--model); }
+    .chain .panel:nth-child(4) > header { background:var(--task); }
+    .chain .panel:nth-child(5) > header { background:var(--ctx); }
+    .chain .panel:nth-child(5) > header h4 { color:var(--ink); }
+    .chain .body { font-size:.8rem; }
+    .chain-return { display:flex; align-items:center; justify-content:center; gap:.6rem; margin-top:1rem; padding:.5rem .8rem; border:2px dashed var(--gold); border-radius:99px; color:var(--ink); font-size:.84rem; font-weight:700; text-align:center; }
+    .chain-return::before { content:"↺"; color:var(--gold-ink); font-size:1.2rem; }
+    .chain-frame { margin-top:.9rem; color:var(--quiet); font:500 .6rem var(--mono); letter-spacing:.08em; text-align:center; text-transform:uppercase; }
+
+    /* four kinds of judgment */
+    .judge .panel:nth-child(1) > header { background:#6e7f8f; }
+    .judge .panel:nth-child(2) > header { background:var(--slate); }
+    .judge .panel:nth-child(3) > header { background:var(--navy); }
+    .judge .panel:nth-child(4) > header { background:var(--manage); }
+    .scale-bar { display:grid; grid-template-columns:repeat(4,1fr); margin-top:1.1rem; border-radius:99px; overflow:hidden; font:500 .58rem var(--mono); letter-spacing:.06em; text-align:center; text-transform:uppercase; }
+    .scale-bar span { padding:.35rem .3rem; color:#fff; }
+    .scale-bar span:nth-child(1) { background:#6e7f8f; } .scale-bar span:nth-child(2) { background:var(--slate); } .scale-bar span:nth-child(3) { background:var(--navy); } .scale-bar span:nth-child(4) { background:var(--manage); }
+
+    /* Asimov override ladder */
+    .ladder { display:grid; gap:.5rem; margin:0; padding:0; list-style:none; }
+    .ladder li { display:grid; grid-template-columns:4.6rem minmax(0,1fr) 9rem; align-items:center; gap:.9rem; padding:.7rem .9rem; border-left:6px solid var(--hue); border-radius:4px; background:var(--tint); }
+    .ladder .lawn { color:var(--hue); font:700 1rem var(--sans); }
+    .ladder .lawn small { display:block; color:var(--quiet); font:500 .56rem var(--mono); letter-spacing:.06em; text-transform:uppercase; }
+    .ladder p { margin:0; font-size:.88rem; }
+    .ladder .ov { color:var(--quiet); font:500 .6rem/1.35 var(--mono); letter-spacing:.04em; text-align:right; text-transform:uppercase; }
+    .ladder-note { display:flex; justify-content:space-between; margin-top:.5rem; color:var(--quiet); font:500 .6rem var(--mono); letter-spacing:.06em; text-transform:uppercase; }
+
+    /* eight principles around the system */
+    .ring8 { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:.8rem; }
+    .ring8 .p { position:relative; min-width:0; padding:1rem 1rem .95rem; border:1px solid #c3ccd3; border-radius:12px; background:#fff; }
+    .ring8 .p header { display:flex; align-items:center; gap:.6rem; margin-bottom:.5rem; }
+    .ring8 .p h4 { margin:0; }
+    .ring8 .p p { margin:0; font-size:.83rem; line-height:1.48; }
+    .ring8 .core { display:flex; flex-direction:column; align-items:center; justify-content:center; padding:1.2rem; border-radius:50%/42%; color:#fff; background:radial-gradient(circle at 50% 45%,var(--govern) 0 58%,var(--navy) 59% 100%); text-align:center; }
+    .ring8 .core b { font-size:1.15rem; }
+    .ring8 .core span { max-width:15rem; margin-top:.35rem; font-size:.78rem; line-height:1.35; }
+    .ring8 .core small { margin-top:.6rem; padding:.2rem .5rem; border:1px solid #ffffff99; border-radius:99px; font:500 .55rem var(--mono); letter-spacing:.07em; text-transform:uppercase; }
+
+    /* before / during / after */
+    .timebar { position:relative; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1rem; padding-top:2.6rem; }
+    .timebar::before { position:absolute; top:1rem; right:2%; left:2%; height:6px; border-radius:3px; background:linear-gradient(90deg,var(--map) 0 33%,var(--measure) 33% 66%,var(--manage) 66%); content:""; }
+    .timebar::after { position:absolute; top:.55rem; left:50%; padding:0 .4rem; color:var(--ink); background:var(--sheet); content:"⚡ the harmful event"; font:700 .7rem var(--sans); transform:translateX(-50%) translateY(-100%); }
+    .timebar .t { position:relative; padding:.9rem; border:1px solid #c3ccd3; border-top:5px solid var(--hue); border-radius:8px; background:#fff; }
+    .timebar .t::before { position:absolute; top:-2.05rem; left:50%; width:1rem; height:1rem; border:3px solid #fff; border-radius:50%; background:var(--hue); box-shadow:0 0 0 2px var(--hue); content:""; transform:translateX(-50%); }
+    .timebar .t small { display:block; color:var(--quiet); font:500 .58rem var(--mono); letter-spacing:.07em; text-transform:uppercase; }
+    .timebar .t h4 { margin:.2rem 0 .35rem; }
+    .timebar .t p { margin:0; font-size:.84rem; }
+
+    /* dilemma: hidden upstream choices + fork */
+    .dilemma { display:grid; grid-template-columns:minmax(0,1.25fr) 3rem minmax(0,1fr); gap:.6rem; align-items:center; }
+    .upstream { padding:.9rem; border:2px dashed var(--map); border-radius:12px; background:var(--pale-teal); }
+    .upstream h4 { margin-bottom:.5rem; color:var(--teal-ink); font-size:.92rem; }
+    .upstream ol { display:grid; gap:.3rem; margin:0; padding:0; list-style:none; counter-reset:up; }
+    .upstream li { display:grid; grid-template-columns:1.4rem 1fr; gap:.4rem; font-size:.82rem; counter-increment:up; }
+    .upstream li::before { color:var(--teal-ink); content:counter(up); font:700 .8rem var(--mono); }
+    .fail-pt { display:grid; place-items:center; color:var(--ink); font-size:1.6rem; text-align:center; }
+    .fail-pt span { display:block; font:700 .55rem var(--mono); letter-spacing:.05em; text-transform:uppercase; }
+    .fork { display:grid; gap:.6rem; }
+    .fork > div { padding:.8rem .9rem; border:1px solid #c3ccd3; border-left:6px solid var(--hue); border-radius:6px; background:#fff; font-size:.83rem; }
+    .fork b { display:block; color:var(--ink); }
+    .fork-label { margin:.2rem 0 0; color:var(--quiet); font:500 .58rem var(--mono); letter-spacing:.06em; text-align:center; text-transform:uppercase; }
+
+    /* replace / assist / redesign bars */
+    .taskbars { display:grid; gap:.9rem; }
+    .taskbar { display:grid; grid-template-columns:8rem minmax(0,1fr); gap:1rem; align-items:center; }
+    .taskbar > b { color:var(--navy); font-size:1.05rem; }
+    .taskbar .bar { display:flex; min-height:2.4rem; border:1px solid #b9c4cd; border-radius:6px; overflow:hidden; font-size:.74rem; font-weight:700; }
+    .taskbar .bar span { display:flex; align-items:center; justify-content:center; padding:.3rem .5rem; text-align:center; line-height:1.2; }
+    .bar .m { color:#fff; background:var(--manage); }
+    .bar .h { color:var(--ink); background:var(--pale-gold); }
+    .bar .n { color:var(--ink); background:repeating-linear-gradient(135deg,#fde3e0 0 8px,#fff 8px 16px); }
+    .taskbar p { grid-column:2; margin:.3rem 0 0; font-size:.82rem; }
+    .key { display:flex; flex-wrap:wrap; gap:1rem; margin-top:1rem; font-size:.74rem; }
+    .key span { display:flex; align-items:center; gap:.35rem; }
+    .key i { display:inline-block; width:1rem; height:.8rem; border:1px solid #b9c4cd; }
+
+    /* healthcare spectrum */
+    .spectrum-axis { display:flex; justify-content:space-between; margin:0 0 .5rem; padding:.35rem .8rem; border-radius:99px; color:#fff; background:linear-gradient(90deg,#8fa3bd,var(--manage)); font:500 .6rem var(--mono); letter-spacing:.06em; text-transform:uppercase; }
+    .flow5 { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:1.2rem; margin:0; padding:0; list-style:none; }
+    .flow5 li { position:relative; padding:.85rem .8rem; border:1px solid #c3ccd3; border-radius:10px; background:#fff; font-size:.8rem; }
+    .flow5 li:not(:last-child)::after { position:absolute; top:50%; right:-1.05rem; color:var(--gold-ink); content:"▶"; font-size:.8rem; transform:translateY(-50%); }
+    .flow5 li b { display:block; margin-bottom:.25rem; color:var(--navy); font-size:.9rem; }
+    .flow5 li.hl { border:2px solid var(--data); background:var(--pale-blue); }
+    .flow5 li .chk { display:block; margin-top:.4rem; color:var(--teal-ink); font:500 .58rem var(--mono); letter-spacing:.05em; text-transform:uppercase; }
+    .bracket { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:1.2rem; margin-top:.5rem; font-size:.74rem; }
+    .bracket span { padding-top:.4rem; border-top:3px solid var(--data); color:var(--blue-ink); font-weight:700; text-align:center; }
+    .bracket span.all { grid-column:1 / -1; border-top-color:var(--gold); color:var(--gold-ink); }
+
+    /* data: four separate questions */
+    .gates { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:1.3rem; margin:0; padding:0; list-style:none; counter-reset:g; }
+    .gates li { position:relative; display:flex; flex-direction:column; border:1px solid #c3ccd3; border-radius:12px; overflow:visible; background:#fff; counter-increment:g; }
+    .gates li:not(:last-child)::after { position:absolute; top:2.1rem; right:-1.25rem; width:1.25rem; height:4px; background:var(--gold); content:""; }
+    .gates .q { padding:.85rem .85rem .7rem; border-radius:11px 11px 0 0; color:#fff; background:var(--hue); font-weight:700; font-size:.9rem; line-height:1.3; }
+    .gates .q::before { display:block; margin-bottom:.25rem; content:"Question " counter(g); font:500 .56rem var(--mono); letter-spacing:.07em; opacity:.9; text-transform:uppercase; }
+    .gates .a { flex:1; padding:.75rem .85rem; font-size:.8rem; }
+    .gates .a p { margin:0 0 .45rem; }
+    .gates .loan { margin:0; padding:.6rem .85rem .75rem; border-top:1px dashed var(--rule); border-radius:0 0 11px 11px; background:var(--pale-gold); font-size:.78rem; }
+    .gates .loan b { color:var(--gold-ink); font:500 .56rem var(--mono); letter-spacing:.06em; text-transform:uppercase; }
+    .duties { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:.55rem; }
+    .duties div { padding:.75rem .8rem; border-top:4px solid var(--hue,var(--govern)); border-radius:4px; background:#fff; box-shadow:0 1px 3px rgb(27 40 56 / .1); }
+    .duties b { display:flex; align-items:center; gap:.45rem; margin-bottom:.3rem; color:var(--navy); font-size:.92rem; }
+    .duties b i { display:grid; place-items:center; width:1.35rem; height:1.35rem; border-radius:50%; color:#fff; background:var(--hue,var(--govern)); font:500 .6rem var(--mono); font-style:normal; }
+    .duties p { margin:0; font-size:.8rem; line-height:1.42; }
+
+    /* human review influence scale */
+    .influence { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:.8rem; }
+    .influence .lvl { padding:.9rem; border:1px solid #c3ccd3; border-radius:10px; background:#fff; }
+    .influence .lvl h4 { margin-bottom:.4rem; }
+    .meter { display:grid; grid-template-columns:repeat(5,1fr); gap:3px; margin:.2rem 0 .6rem; }
+    .meter i { height:.6rem; border-radius:2px; background:#dfe4e8; }
+    .meter.m5 i { background:var(--map); }
+    .meter.m1 i:first-child { background:var(--measure); }
+    .meter.m0 i { background:#dfe4e8; }
+    .meter-lab { display:block; color:var(--quiet); font:500 .56rem var(--mono); letter-spacing:.06em; text-transform:uppercase; }
+    .influence p { margin:0; font-size:.83rem; }
+    .needs { display:flex; flex-wrap:wrap; justify-content:center; gap:.45rem; margin-top:1rem; }
+    .needs span { padding:.35rem .7rem; border:2px solid var(--map); border-radius:99px; color:var(--teal-ink); background:#fff; font-size:.8rem; font-weight:700; }
+
+    /* military swimlanes */
+    .lanes { display:grid; gap:.9rem; }
+    .lane { display:grid; grid-template-columns:11rem minmax(0,1fr); gap:1rem; align-items:center; padding:.8rem; border:1px solid #c3ccd3; border-radius:10px; background:#fff; }
+    .lane > b { color:var(--navy); font-size:1rem; line-height:1.25; }
+    .lane > b small { display:block; margin-top:.2rem; color:var(--quiet); font:500 .56rem var(--mono); letter-spacing:.06em; text-transform:uppercase; }
+    .steps { display:flex; flex-wrap:wrap; align-items:center; gap:.35rem; }
+    .steps span { padding:.42rem .65rem; border-radius:6px; font-size:.78rem; font-weight:700; line-height:1.2; }
+    .steps i { color:var(--quiet); font-style:normal; }
+    .steps .sys { color:#fff; background:var(--manage); }
+    .steps .hum { color:var(--ink); background:var(--pale-gold); border:2px solid var(--gold); }
+    .steps .watch { color:var(--ink); background:#fff; border:2px dashed var(--gold); }
+    .steps .none { color:var(--quiet); background:var(--pale-grey); }
+
+    /* committee seats */
+    .seats { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:.6rem; }
+    .seats > div { padding:.75rem .8rem; border:1px solid #c3ccd3; border-left:5px solid var(--hue,var(--slate)); border-radius:6px; background:#fff; font-size:.8rem; }
+    .seats > div b { display:block; color:var(--navy); font-size:.9rem; }
+    .seats .hub { display:flex; flex-direction:column; align-items:center; justify-content:center; border:0; border-radius:50%/45%; color:#fff; background:var(--govern); text-align:center; }
+    .seats .hub b { color:#fff; font-size:1rem; }
+
+    /* risk loop */
+    .loop { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1.4rem 1.6rem; margin:0; padding:0; list-style:none; counter-reset:lp; }
+    .loop li { position:relative; padding:.9rem .95rem; border:1px solid #c3ccd3; border-top:5px solid var(--hue); border-radius:8px; background:#fff; counter-increment:lp; }
+    .loop li::before { display:inline-grid; place-items:center; width:1.7rem; height:1.7rem; margin-bottom:.4rem; border-radius:50%; color:#fff; background:var(--hue); content:counter(lp); font:700 .78rem var(--sans); }
+    .loop li b { display:block; color:var(--navy); }
+    .loop li p { margin:.25rem 0 0; font-size:.82rem; }
+    .loop li:nth-child(1),.loop li:nth-child(2),.loop li:nth-child(4),.loop li:nth-child(5) { }
+    .loop li:nth-child(-n+2)::after,.loop li:nth-child(n+5)::after { position:absolute; top:50%; color:var(--gold-ink); font-size:1rem; transform:translateY(-50%); }
+    .loop li:nth-child(-n+2)::after { right:-1.25rem; content:"▶"; }
+    .loop li:nth-child(n+5)::after { left:-1.25rem; content:"◀"; }
+    .loop li:nth-child(4) { grid-column:3; grid-row:2; }
+    .loop li:nth-child(5) { grid-column:2; grid-row:2; }
+    .loop li:nth-child(6) { grid-column:1; grid-row:2; }
+    .loop li:nth-child(3)::after { position:absolute; bottom:-1.3rem; left:50%; color:var(--gold-ink); content:"▼"; transform:translateX(-50%); }
+    .loop-back { display:flex; align-items:center; justify-content:center; gap:.5rem; margin-top:1rem; padding:.45rem .8rem; border:2px dashed var(--gold); border-radius:99px; color:var(--ink); font-size:.82rem; font-weight:700; text-align:center; }
+    .loop-back::before { content:"↺"; color:var(--gold-ink); font-size:1.15rem; }
+
+    /* NIST Figure 5 rebuilt in HTML so it reflows */
+    .f5 { position:relative; display:grid; grid-template-columns:1fr minmax(15rem,19rem) 1fr; grid-template-rows:auto auto auto; align-items:center; gap:1rem 1.2rem; }
+    .f5-title { grid-column:1 / -1; margin:0; color:var(--navy); font-size:1.15rem; font-weight:700; text-align:center; }
+    .f5-orbit { grid-column:2; grid-row:2 / 4; position:relative; display:grid; place-items:center; aspect-ratio:1; border:10px solid #d3d6d9; border-radius:50%; }
+    .f5-gov { display:grid; place-items:center; width:78%; aspect-ratio:1; border-radius:50%; background:conic-gradient(var(--measure) 0 120deg,var(--manage) 120deg 240deg,var(--map) 240deg 360deg); }
+    .f5-gov > div { display:flex; flex-direction:column; align-items:center; justify-content:center; width:84%; aspect-ratio:1; border-radius:50%; color:#fff; background:var(--govern); text-align:center; }
+    .f5-gov svg { width:1.9rem; height:1.9rem; }
+    .f5-gov b { margin-top:.25rem; font-size:1.2rem; }
+    .f5-gov span { max-width:10rem; margin-top:.2rem; font-size:.78rem; line-height:1.3; }
+    .f5-card { position:relative; padding:1.7rem .9rem .9rem; border:4px solid var(--hue); border-radius:18px; background:#fff; text-align:center; }
+    .f5-card .badge { position:absolute; top:0; left:50%; transform:translate(-50%,-55%); }
+    .f5-card h4 { margin-bottom:.25rem; color:var(--navy); font-size:1.05rem; }
+    .f5-card p { margin:0; font-size:.82rem; line-height:1.4; }
+    .f5-map { grid-column:1; grid-row:2; }
+    .f5-measure { grid-column:3; grid-row:2; }
+    .f5-manage { grid-column:2; grid-row:4; max-width:17rem; justify-self:center; margin-top:-1.2rem; }
+    .f5-note { grid-column:1; grid-row:3; color:var(--quiet); font-size:.78rem; }
+    .f5-note2 { grid-column:3; grid-row:3; color:var(--quiet); font-size:.78rem; text-align:right; }
+
+    /* NIST Figure 2 sunburst */
+    .f2 { display:grid; grid-template-columns:minmax(0,1fr) minmax(16rem,22rem); gap:1.4rem; align-items:center; }
+    .f2 svg { display:block; width:100%; max-width:34rem; height:auto; margin:0 auto; }
+    .sb-in { font:700 15px var(--sans); }
+    .sb-out { fill:#1b2838; font:700 13.5px var(--sans); }
+    .sb-core { fill:#fff; font:700 19px var(--sans); text-anchor:middle; }
+    .f2-key { display:grid; gap:.45rem; margin:0; padding:0; list-style:none; }
+    .f2-key li { padding:.55rem .7rem; border-left:6px solid var(--hue); border-radius:4px; background:var(--tint); font-size:.8rem; line-height:1.35; }
+    .f2-key li b { display:block; color:var(--ink); font-size:.88rem; }
+
+    /* NIST Figure 4 trustworthiness */
+    .f4 { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)) minmax(4.5rem,.7fr); grid-template-rows:auto auto; gap:.45rem; }
+    .f4 .pillar { display:flex; flex-direction:column; justify-content:flex-end; min-height:9rem; padding:.7rem .55rem; border-radius:8px 8px 0 0; color:#fff; background:var(--hue); text-align:center; }
+    .f4 .pillar b { font-size:.9rem; line-height:1.2; }
+    .f4 .pillar small { display:block; margin-top:.35rem; font-size:.7rem; line-height:1.3; opacity:.95; }
+    .f4 .base { grid-column:1 / 6; grid-row:2; padding:.7rem; border-radius:0 0 8px 8px; color:#fff; background:var(--navy); text-align:center; }
+    .f4 .base b { font-size:1rem; }
+    .f4 .base small { display:block; font-size:.72rem; }
+    .f4 .side { grid-column:6; grid-row:1 / 3; display:flex; align-items:center; justify-content:center; padding:.6rem .4rem; border-radius:8px; color:var(--ink); background:var(--gold); }
+    .f4 .side b { font-size:.9rem; line-height:1.15; text-align:center; writing-mode:vertical-rl; transform:rotate(180deg); }
+    .wwh { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:.6rem; margin:1rem 0; }
+    .wwh div { padding:.75rem .85rem; border:1px solid #c3ccd3; border-radius:8px; background:#fff; text-align:center; }
+    .wwh b { display:block; color:var(--gold-ink); font-size:1.35rem; }
+    .wwh span { display:block; color:var(--navy); font-weight:700; }
+    .wwh p { margin:.3rem 0 0; font-size:.78rem; }
+    .traits { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.6rem; margin:1rem 0; }
+    .traits article { padding:.8rem .9rem; border-left:5px solid var(--hue); border-radius:4px; background:#fff; }
+    .traits b { color:var(--navy); }
+    .traits p { margin:.25rem 0 0; font-size:.83rem; }
+
+    /* NIST Core: Playbook-style jump buttons + function columns */
+    .fn-jump { display:flex; flex-wrap:wrap; justify-content:center; gap:.6rem; margin:1.2rem 0; }
+    .fn-jump a { min-width:8.5rem; padding:.7rem 1.2rem; border-bottom:4px solid rgb(0 0 0 / .18); border-radius:3px; color:var(--ink); background:#f7943c; font-size:1.15rem; font-weight:700; text-align:center; text-decoration:none; }
+    .fn-jump a:hover,.fn-jump a:focus-visible { color:#fff; background:var(--navy); outline:none; }
+    .fns { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:.6rem; }
+    .fn { display:flex; flex-direction:column; min-width:0; border-radius:12px; overflow:hidden; background:var(--tint); scroll-margin-top:1rem; }
+    .fn > header { display:flex; align-items:center; gap:.55rem; padding:.75rem .8rem; color:#fff; background:var(--hue); }
+    .fn > header .badge { width:2.1rem; flex:none; border-color:var(--hue); background:#fff; color:var(--hue); box-shadow:none; }
+    .fn > header h4 { margin:0; color:#fff; font-size:1.15rem; }
+    .fn > header small { display:block; font-size:.72rem; font-weight:400; }
+    .fn ul { margin:0; padding:.8rem .8rem .2rem 1.8rem; font-size:.8rem; }
+    .fn li { margin:.3rem 0; line-height:1.4; }
+    .fn .hire { margin-top:auto; padding:.7rem .8rem; border-top:2px solid var(--ink); background:rgb(255 255 255 / .75); font-size:.8rem; }
+    .fn .hire b { display:block; color:var(--ink); font:500 .56rem var(--mono); letter-spacing:.07em; text-transform:uppercase; }
+    .benefits { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:.5rem; margin:0; padding:0; list-style:none; counter-reset:bn; }
+    .benefits li { display:grid; grid-template-columns:2rem 1fr; gap:.5rem; align-items:start; padding:.7rem .75rem; border:1px solid #c3ccd3; border-radius:8px; background:#fff; font-size:.82rem; counter-increment:bn; }
+    .benefits li::before { display:grid; place-items:center; width:1.7rem; height:1.7rem; border-radius:50%; color:#fff; background:var(--slate); content:counter(bn); font:700 .75rem var(--sans); }
+    .thru { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:1.1rem; }
+
+    /* OECD */
+    .oecd { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1.6rem 1.2rem; }
+    .oecd .panel > header { justify-content:flex-start; gap:.6rem; text-align:left; background:var(--hue); }
+    .oecd .panel > header .badge { width:2rem; flex:none; border-color:var(--hue); color:var(--hue); background:#fff; box-shadow:none; }
+    .oecd .panel:last-child { grid-column:1 / -1; }
+    .oecd .eg { margin-top:.7rem !important; padding:.6rem .7rem; border-radius:6px; background:var(--pale-gold); font-size:.84rem; }
+    .tiers { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:.5rem; }
+    .tier-lab { grid-column:1 / -1; display:flex; align-items:center; gap:.6rem; margin:.6rem 0 .1rem; color:var(--navy); font:500 .62rem var(--mono); letter-spacing:.08em; text-transform:uppercase; }
+    .tier-lab::after { flex:1; height:2px; background:var(--rule); content:""; }
+    .tiers .gov { padding:.7rem .7rem; border-radius:10px 10px 0 0; color:#fff; background:var(--navy); font-size:.8rem; }
+    .tiers .gov b { display:block; margin-bottom:.25rem; font-size:.88rem; }
+    .tiers .you { position:relative; padding:.7rem; border:2px solid var(--map); border-radius:0 0 10px 10px; background:var(--pale-teal); font-size:.78rem; }
+    .tiers .you::before { position:absolute; top:-.95rem; left:50%; color:var(--teal-ink); content:"▼"; font-size:.8rem; transform:translateX(-50%); }
+
+    /* course route (metro line) */
+    .metro { position:relative; display:grid; gap:0; margin:0; padding:0 0 0 .2rem; list-style:none; }
+    .metro::before { position:absolute; top:.8rem; bottom:.8rem; left:1.05rem; width:6px; border-radius:3px; background:linear-gradient(var(--ctx) 0 20%,var(--data) 20% 50%,var(--model) 50% 70%,var(--manage) 70%); content:""; }
+    .metro li { position:relative; display:grid; grid-template-columns:2.2rem minmax(0,1fr) auto; gap:.8rem; align-items:center; padding:.5rem 0; }
+    .metro li::before { z-index:1; display:grid; place-items:center; width:1.9rem; height:1.9rem; border:4px solid var(--hue,var(--navy)); border-radius:50%; background:#fff; content:""; }
+    .metro b { display:block; color:var(--navy); font-size:.95rem; }
+    .metro span { color:var(--quiet); font-size:.8rem; }
+    .metro em { padding:.25rem .55rem; border-radius:99px; color:#fff; background:var(--hue,var(--navy)); font:500 .58rem var(--mono); font-style:normal; letter-spacing:.05em; text-transform:uppercase; white-space:nowrap; }
+    .metro a { color:inherit; text-decoration:none; }
+    .metro a:hover b { text-decoration:underline; }
+
+    /* practice */
+    .checklist-wrap { margin:1.2rem 0; }
+    .progress { position:sticky; top:0; z-index:5; display:flex; align-items:center; gap:.8rem; padding:.6rem .9rem; border:1px solid var(--rule); border-radius:8px; background:var(--sheet); font-size:.82rem; font-weight:700; }
+    .progress .track { flex:1; height:.55rem; border-radius:99px; overflow:hidden; background:#e2e6e9; }
+    .progress .fill { width:0; height:100%; background:var(--map); transition:width .2s; }
+    .checklist fieldset { display:grid; gap:.1rem; margin:.9rem 0; padding:.7rem 1rem 1rem; border:2px solid var(--hue); border-radius:12px; background:#fff; }
+    .checklist legend { padding:.2rem .6rem; border-radius:6px; color:#fff; background:var(--hue); font:700 .82rem var(--sans); }
+    .checklist legend span { margin-left:.4rem; font:500 .64rem var(--mono); opacity:.9; }
+    .checklist label { display:grid; grid-template-columns:1.3rem minmax(0,1fr); gap:.55rem; align-items:start; padding:.4rem .2rem; border-bottom:1px solid #eef0f2; font-size:.88rem; cursor:pointer; }
+    .checklist label:last-child { border-bottom:0; }
+    .checklist input { width:1.05rem; height:1.05rem; margin:.2rem 0 0; accent-color:var(--map); }
+    .checklist input:checked + span { color:var(--quiet); }
+    .stop { margin:1rem 0 0; padding:.9rem 1rem; border-left:4px solid #c8452c; border-radius:4px; background:#fbe6e1; font-size:.88rem; }
+    details { margin:.7rem 0; border:1px solid #c3ccd3; border-radius:8px; background:#fff; }
+    summary { padding:.85rem 1rem; color:var(--navy); cursor:pointer; font-weight:700; }
+    summary::marker { color:var(--gold-ink); }
+    details > div { padding:0 1rem 1rem; font-size:.9rem; }
+    .kinds { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:.8rem; margin:1.2rem 0; }
+    .src-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.5rem; margin:1rem 0; }
+    .src-grid a { padding:.7rem .8rem; border:1px solid var(--rule); border-left:4px solid var(--hue,var(--govern)); border-radius:4px; background:#fff; font-size:.83rem; text-decoration:none; }
+    .src-grid a:hover { background:var(--pale-blue); }
+    .src-grid small { display:block; color:var(--quiet); font:500 .56rem var(--mono); letter-spacing:.06em; text-transform:uppercase; }
+    .footer { display:flex; justify-content:space-between; gap:1.5rem; align-items:center; padding:2rem 0 3rem; border-top:3px solid var(--ink); color:var(--quiet); font-size:.78rem; }
+    .footer p { max-width:56rem; margin:0; }
+    .footer-logo { display:flex; flex:none; align-items:center; gap:.55rem; color:var(--ink); font-size:.74rem; line-height:1.3; text-decoration:none; }
+    .footer-logo img { width:2.8rem; height:2.8rem; object-fit:contain; }
+
+    /* ---------- responsive ---------- */
+    @media (max-width:1180px) {
+      .chain { grid-template-columns:repeat(3,minmax(0,1fr)); }
+      .panels.c4,.judge { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .panels.c4.linked .panel:nth-child(2)::after,.panels.c4.linked .panel:nth-child(2)::before { display:none; }
+      .chain.linked .panel:nth-child(3)::after,.chain.linked .panel:nth-child(3)::before { display:none; }
+      .fns,.thru { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .gates { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .gates li:nth-child(2)::after { display:none; }
+      .duties { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .tiers { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .tiers .gov,.tiers .you { grid-column:auto; }
+      .matrix.m7 { grid-template-columns:repeat(4,minmax(0,1fr)) !important; }
+      .f2 { grid-template-columns:1fr; }
+      .benefits { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    }
+    @media (max-width:860px) {
+      .layout { display:block; }
+      .rail { position:sticky; z-index:10; height:auto; max-height:100vh; padding:.6rem 1rem; }
+      .brand { padding:0; border:0; }
+      .nav-toggle { display:block; margin-left:auto; padding:.4rem .7rem; border:1px solid #5b6b7c; border-radius:6px; color:#fff; background:transparent; font:700 .78rem var(--sans); cursor:pointer; }
+      .rail-top { display:flex; align-items:center; gap:.6rem; }
+      .rail nav,.rail-note,.credit { display:none; }
+      .rail.open nav { display:block; max-height:70vh; overflow-y:auto; }
+      .ring8 { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .ring8 .core { grid-column:1 / -1; grid-row:1; border-radius:14px; }
+      .panels.c3,.panels.c4,.judge,.chain,.grid2,.kinds,.influence,.timebar,.wwh,.traits,.oecd,.seats,.flow5,.bracket,.benefits { grid-template-columns:1fr; }
+      .seats .hub { border-radius:14px; padding:1rem; }
+      .panels.linked .panel::after,.panels.linked .panel::before { display:none !important; }
+      .panels.linked { gap:1.4rem; }
+      .panels.linked .panel:not(:last-child) > .body { position:relative; }
+      .panels.linked .panel:not(:last-child)::after { display:block !important; top:auto; right:auto; bottom:-1.45rem; left:50%; width:4px; height:1.45rem; transform:translateX(-50%); }
+      .oecd .panel:last-child { grid-column:auto; }
+      .timebar { padding-top:0; padding-left:2rem; gap:1.4rem; }
+      .timebar::before { top:.5rem; bottom:.5rem; right:auto; left:.6rem; width:6px; height:auto; background:linear-gradient(var(--map) 0 33%,var(--measure) 33% 66%,var(--manage) 66%); }
+      .timebar::after { top:33.5%; left:1.4rem; transform:none; }
+      .timebar .t::before { top:1rem; left:-1.75rem; transform:none; }
+      .dilemma { grid-template-columns:1fr; }
+      .fail-pt { transform:rotate(90deg); }
+      .flow5 li:not(:last-child)::after { top:auto; right:auto; bottom:-1.1rem; left:50%; content:"▼"; transform:translateX(-50%); }
+      .bracket span { grid-column:1 !important; }
+      .loop { grid-template-columns:1fr; gap:1.3rem; }
+      .loop li:nth-child(n) { grid-column:1; grid-row:auto; }
+      .loop li:not(:last-child)::after { position:absolute; top:auto !important; right:auto !important; bottom:-1.25rem; left:50% !important; color:var(--gold-ink); content:"▼" !important; transform:translateX(-50%) !important; }
+      .lane { grid-template-columns:1fr; gap:.5rem; }
+      .f5 { grid-template-columns:1fr; gap:1.6rem; }
+      .f5 > * { grid-column:1 !important; grid-row:auto !important; }
+      .f5-orbit { width:min(17rem,100%); justify-self:center; }
+      .f5-manage { max-width:none; margin-top:0; }
+      .f5-note2 { text-align:left; }
+      .f4 { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .f4 .pillar { min-height:0; border-radius:8px; }
+      .f4 .base,.f4 .side { grid-column:1 / -1; grid-row:auto; border-radius:8px; }
+      .f4 .side b { writing-mode:horizontal-tb; transform:none; }
+      .matrix.m7 { grid-template-columns:1fr !important; }
+      .sec-head { grid-template-columns:3.2rem minmax(0,1fr); gap:.8rem; }
+      .sec-num { width:3.1rem; font-size:1.05rem; }
+      .ladder li { grid-template-columns:3.6rem minmax(0,1fr); }
+      .ladder .ov { grid-column:2; text-align:left; }
+      .footer { align-items:flex-start; flex-direction:column; }
+    }
+    @media (max-width:560px) {
+      body { font-size:16px; }
+      .gates,.duties,.fns,.thru,.tiers,.src-grid,.ring8 { grid-template-columns:1fr; }
+      .gates li::after { display:none; }
+      .taskbar { grid-template-columns:1fr; gap:.4rem; }
+      .taskbar p { grid-column:1; }
+      .topline span:first-child { display:none; }
+      .plate { padding-right:.7rem; padding-left:.7rem; }
+      .plate-title { font-size:.86rem; white-space:normal; width:max-content; }
+      .strip.chev > li,.strip.chev > li:first-child { clip-path:none; padding-left:1rem; border-left:5px solid var(--hue,var(--navy)); }
+      .metro li { grid-template-columns:2.2rem minmax(0,1fr); }
+      .metro em { grid-column:2; justify-self:start; }
+      .fn-jump a { min-width:0; flex:1 1 40%; font-size:1rem; }
+    }
+    @media print { .rail,.topline,.progress { display:none; } .layout { display:block; } .plate,.checklist fieldset,.panel,.fn { break-inside:avoid; } }
+    @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } .progress .fill { transition:none; } }
+    /* patch: pairs, inline-grid overrides */
+    .tier-key { display:flex; flex-wrap:wrap; justify-content:center; gap:.6rem 1.4rem; margin:0 0 .9rem; font:500 .62rem var(--mono); letter-spacing:.07em; text-transform:uppercase; }
+    .tier-key span::before { display:inline-block; width:.8rem; height:.8rem; margin-right:.4rem; vertical-align:-1px; content:""; }
+    .k-gov::before { background:var(--navy); }
+    .k-you::before { border:2px solid var(--map); background:var(--pale-teal); }
+    .tiers .pair { display:grid; grid-template-rows:subgrid; grid-row:span 2; gap:1.1rem; }
+    .tiers { grid-template-rows:auto auto; row-gap:0; }
+    .matrix .mcol { display:grid; grid-template-rows:subgrid; grid-row:span 3; gap:0; }
+    .matrix.m7 .mcol { grid-row:span 5; }
+    .gates .q { min-height:5.4rem; }
+    .f5-map,.f5-measure { align-self:start; margin-top:1.4rem; }
+    .benefits { margin-bottom:1.1rem; }
+    @media (max-width:1180px) {
+      .tiers { grid-template-columns:repeat(2,minmax(0,1fr)) !important; row-gap:1rem; }
+      .tiers .pair { grid-template-rows:auto 1fr; grid-row:auto; }
+      .matrix[style] { grid-template-columns:repeat(2,minmax(0,1fr)) !important; }
+      .strip[style] { grid-template-columns:repeat(2,minmax(0,1fr)) !important; }
+      .strip.chev > li,.strip.chev > li:first-child { clip-path:none; padding-left:1rem; border-left:5px solid var(--hue,var(--navy)); }
+    }
+    .ladder-note { flex-wrap:wrap; gap:.3rem 1rem; }
+    @media (max-width:860px) {
+      .matrix[style],.matrix.m7[style] { grid-template-columns:1fr !important; }
+      .timebar::after { display:none; }
+      .fail-pt { transform:none; }
+      .loop li:last-child::after { display:none !important; }
+      .panels.linked .panel:not(:last-child)::after { width:4px !important; right:auto !important; }
+    }
+    @media (max-width:560px) { .gates .q { min-height:0; } }
+    @media (max-width:560px) {
+      .tiers,.strip[style] { grid-template-columns:1fr !important; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to guide</a>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="i-govern" viewBox="0 0 24 24"><path d="M3 21h18M4 10h16M12 3l8 5H4zM6 10v9M10 10v9M14 10v9M18 10v9" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-map" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16.5 7.5l-6 2.2-2.2 6.8 6-2.2z" fill="currentColor"/></symbol>
+    <symbol id="i-measure" viewBox="0 0 24 24"><path d="M2.5 16.5L16.5 2.5l5 5-14 14zM7 12l2 2M10 9l2 2M13 6l2 2" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-manage" viewBox="0 0 24 24"><path d="M9 2h6v5H9zM2 17h6v5H2zM16 17h6v5h-6zM12 7v5M5 17v-5h14v5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+  </svg>
+  <div class="layout">
+    <aside class="rail" id="rail" aria-label="Guide navigation">
+      <div class="rail-top">
+        <a class="brand" href="#top"><span class="brand-mark" aria-hidden="true"><b>AI</b></span><span><small>Learning companion</small><strong>Ethical considerations in AI</strong></span></a>
+        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="rail-nav">Sections</button>
+      </div>
+      <nav id="rail-nav" aria-label="Sections">
+        <p class="rail-label">Read the guide</p>
+        <ol>
+          <li><a href="#question"><span>01</span>What ethics asks</a></li>
+          <li><a href="#principles"><span>02</span>Principles: LMS and OECD</a></li>
+          <li><a href="#dilemmas"><span>03</span>Moral dilemmas</a></li>
+          <li><a href="#automation"><span>04</span>Work and automation</a></li>
+          <li><a href="#healthcare"><span>05</span>Healthcare robotics</a></li>
+          <li><a href="#data-decisions"><span>06</span>Automated decisions and data</a></li>
+          <li><a href="#military"><span>07</span>Military robotics</a></li>
+          <li><a href="#governance"><span>08</span>Governance and risk</a></li>
+          <li class="rail-sub"><a href="#nist-risk" style="--dot:var(--gold)">NIST: framing risk</a></li>
+          <li class="rail-sub"><a href="#nist-audience" style="--dot:var(--data)">NIST: who takes part</a></li>
+          <li class="rail-sub"><a href="#nist-trust" style="--dot:var(--model)">NIST: trustworthy AI</a></li>
+          <li class="rail-sub"><a href="#nist-core" style="--dot:var(--govern)">NIST: the Core</a></li>
+          <li class="rail-sub"><a href="#oecd-gov" style="--dot:#9fb4c8">OECD: for governments</a></li>
+          <li><a href="#course-route"><span>09</span>Course route</a></li>
+          <li><a href="#check"><span>10</span>Practice and checklist</a></li>
+          <li><a href="#sources"><span>11</span>Sources and boundaries</a></li>
+        </ol>
+      </nav>
+      <p class="rail-note">Companion to the Code Institute LMS topic. The LMS capture and independent updates are kept separate.</p>
+      <a class="credit" href="https://github.com/TidyWeb/" target="_blank" rel="noopener noreferrer"><img src="assets/tidyweb_logo.png" alt=""><span>Independent study material<br>by TidyWeb</span></a>
+    </aside>
+
+    <main id="main">
+      <div class="topline"><span>Data ethics · AI · robotics</span><span>Diploma in Data Analytics with AI · learner overview</span></div>
+      <div class="wrap">
+        <header class="hero" id="top">
+          <p class="eyebrow">From principle to practice</p>
+          <h1>Whose values are in the system?</h1>
+          <p class="lede">AI ethics asks what should happen when a system affects people, and who answers for the choices built into it. A useful review starts with people and consequences, then checks the data, safeguards, oversight and the route to challenge a decision.</p>
+          <blockquote class="motto"><p lang="la">Cui bono? Cui damno?</p><p class="motto-en">Who benefits? Who bears the loss?</p></blockquote>
+          <div class="notice"><p><strong>Independent companion, not official Code Institute material or legal advice.</strong> LMS wording is preserved separately. UK and EU legal context was checked on 14 October 2026; NIST says AI RMF 1.0 is being revised. All worked examples are invented.</p></div>
+          <div class="meta"><span>LMS anchor: Ethical considerations in AI</span><span>10 LMS sections covered</span><span>Diagrams are schematic</span></div>
+
+          <figure class="plate" aria-labelledby="f1-cap">
+            <p class="plate-title">Where ethics enters an AI system</p>
+            <div class="panels linked chain">
+              <article class="panel"><header><h4>People</h4></header><div class="body"><p>Applicants, patients, workers, customers. They supply data and live with the result.</p><p class="ask">Who is affected, and who is missing?</p></div></article>
+              <article class="panel"><header><h4>Data</h4></header><div class="body"><p>Records, labels and measurements chosen by someone, for some purpose.</p><p class="ask">Is it accurate, relevant and permitted?</p></div></article>
+              <article class="panel"><header><h4>System</h4></header><div class="body"><p>A model or rule turns inputs into a score, ranking, alert or action.</p><p class="ask">Does it work here, for everyone?</p></div></article>
+              <article class="panel"><header><h4>Decision</h4></header><div class="body"><p>A person or process acts on the output: shortlist, refuse, alert, move.</p><p class="ask">Who decides, and with what information?</p></div></article>
+              <article class="panel"><header><h4>Challenge</h4></header><div class="body"><p>The affected person can question, correct or appeal; the team can fix or stop it.</p><p class="ask">Is there a real route back?</p></div></article>
+            </div>
+            <p class="chain-return">Feedback from challenges, complaints and monitoring flows back to people, data and system</p>
+            <p class="chain-frame">The whole chain sits inside responsible people and organisations</p>
+            <figcaption class="figcap" id="f1-cap"><b>Fig. 1:</b> Schematic for this guide. The system is one link in a human process. Each link has its own ethical question; a fault in any link can harm people.</figcaption>
+          </figure>
+        </header>
+
+        <section class="sec" id="question">
+          <div class="sec-head"><span class="sec-num" aria-hidden="true">01</span><div><p class="eyebrow">LMS section 1 · start with a decision someone will live with</p><h2>Ethics asks what should happen, who is affected, and why.</h2></div></div>
+          <p class="lead">Imagine an employer using software to rank job applications. It may save staff time; it also changes who gets an interview. Before asking whether the software is accurate, ask what “good hiring” means, whose interests count, which evidence is relevant, and who can correct a mistake.</p>
+          <p class="prose">Four words get used loosely in this topic. They answer different questions, and moving from left to right the answer becomes more formal and more enforceable.</p>
+
+          <figure class="plate" aria-labelledby="f2-cap">
+            <p class="plate-title">Four kinds of judgment about one system</p>
+            <div class="panels c4 linked judge">
+              <article class="panel"><header><h4>Morals</h4></header><div class="body"><p>Beliefs about right and wrong held by a person or community. People disagree: managers may see constant monitoring as efficient; workers may see it as intrusive and unfair.</p><p class="ask"><strong>Ask:</strong> whose values shape the decision, and whose have not been heard?</p></div></article>
+              <article class="panel"><header><h4>Ethics</h4></header><div class="body"><p>Examining those beliefs: who benefits, who bears risk, which rights or duties matter, whether burdens are fairly shared, and what evidence could change our view.</p><p class="ask"><strong>Ask:</strong> can we explain and defend this choice to the people it affects?</p></div></article>
+              <article class="panel"><header><h4>Law</h4></header><div class="body"><p>Requirements enforced by public authorities or courts. Which rules apply depends on location, sector, each organisation's role and the facts. Law sets a minimum; it does not answer every ethical question.</p><p class="ask"><strong>Ask:</strong> which rules apply to this use, and who must comply?</p></div></article>
+              <article class="panel"><header><h4>Policy and practice</h4></header><div class="body"><p>An organisation's own procedures: who approves use, what data may be used, how staff review outputs, how complaints are handled, when use must stop.</p><p class="ask"><strong>Ask:</strong> could someone follow this on a busy day and still protect people?</p></div></article>
+            </div>
+            <div class="scale-bar" aria-hidden="true"><span>Personal</span><span>Reasoned</span><span>Enforced</span><span>Operational</span></div>
+            <figcaption class="figcap" id="f2-cap"><b>Fig. 2:</b> Related, not interchangeable. A practice can be legal and still unethical, or ethically sound and not yet covered by policy.</figcaption>
+          </figure>
+
+          <div class="worked"><span class="wlabel">Hiring example · invented</span><h4>A lawful tool can still deserve an ethical challenge.</h4><p>Suppose an application-ranking system meets the data-protection rules that apply. That alone does not show its criteria are job-relevant, that applicants have a fair chance, that it is accessible, or that its benefits outweigh its effects. Equally, a team may have a strong ethical reason to avoid a practice no law bans. “Legal”, “ethical” and “good policy” answer related but different questions.</p></div>
+
+          <h3>Why the course starts with robots</h3>
+          <div class="prose"><p>Robots make the problem easy to picture: a machine senses something, acts, and changes a person's options. AI systems do the same through less visible actions: ranking a CV, flagging a claim, recommending a loan decision, choosing which case a worker sees first. The system never takes responsibility by itself. People and organisations choose its purpose, data, thresholds, setting and response to failure.</p></div>
+
+          <h3>Asimov's laws: a useful story, not an engineering solution</h3>
+          <p class="prose">Asimov's laws come from his robot stories. Each law gives way to the ones above it. He later added a Zeroth Law that sits on top of the other three.</p>
+          <figure class="plate" aria-labelledby="f3-cap">
+            <p class="plate-title">Asimov's laws as an override order</p>
+            <ol class="ladder">
+              <li style="--hue:#8a5a00;--tint:var(--pale-gold)"><span class="lawn">Zeroth<small>added later</small></span><p>A robot must not harm humanity, or allow humanity to be harmed through inaction.</p><span class="ov">Overrides all three below</span></li>
+              <li style="--hue:var(--manage);--tint:var(--pale-navy)"><span class="lawn">First<small>no harm</small></span><p>A robot must not injure a human being, or allow a person to come to harm through inaction.</p><span class="ov">Overrides 2nd and 3rd</span></li>
+              <li style="--hue:var(--blue-ink);--tint:var(--pale-blue)"><span class="lawn">Second<small>obey</small></span><p>A robot must obey a person's orders, unless that would break the First Law.</p><span class="ov">Overrides 3rd</span></li>
+              <li style="--hue:var(--teal-ink);--tint:var(--pale-teal)"><span class="lawn">Third<small>self-protect</small></span><p>A robot must protect itself, unless that would break the First or Second Law.</p><span class="ov">Lowest priority</span></li>
+            </ol>
+            <p class="ladder-note"><span>▲ Higher priority</span><span>Fiction, not a safety specification</span></p>
+            <figcaption class="figcap" id="f3-cap"><b>Fig. 3:</b> The laws in plain language. The Zeroth Law raises a hard question: who defines “humanity's good”, and can that claim justify harming one person?</figcaption>
+          </figure>
+          <div class="prose"><p><strong>Why they fail as engineering rules:</strong> “harm” is vague. Is losing privacy harm? What about a small risk to one person to prevent a larger risk to many? Rules conflict, and a machine may not know what a person intended. A floor-cleaning robot, a hiring model and a military system need very different controls. In a real project, name concrete hazards, limits, decision owners, behaviour under uncertainty, how a human intervenes, and the evidence required before use.</p></div>
+        </section>
+
+        <section class="sec" id="principles">
+          <div class="sec-head"><span class="sec-num" aria-hidden="true">02</span><div><p class="eyebrow">LMS section 2 · roboethics, plus the OECD's five principles</p><h2>Use principles to find where a system could affect people.</h2></div></div>
+          <p class="lead">The course groups roboethics into eight principles for people who design, make, buy, deploy and use robotic systems. Read each one as a lens for spotting a concern. The team then has to turn that concern into requirements, tests, named owners and a way for affected people to be heard.</p>
+
+          <figure class="plate" aria-labelledby="f4-cap">
+            <p class="plate-title">Eight roboethics principles around one system</p>
+            <div class="ring8">
+              <article class="p"><header><span class="badge" style="--hue:var(--govern)">1</span><h4>Human rights</h4></header><p>Protect dignity, safety, choice, equality and access. A patient should be able to refuse a service robot when a safe human alternative exists. Ask what rights or opportunities the system could limit.</p></article>
+              <article class="p"><header><span class="badge" style="--hue:var(--map)">2</span><h4>Precaution</h4></header><p>Don't wait for a serious injury to take a foreseeable risk seriously. Trial in a controlled area, set a safe speed and stop condition, and gather evidence before expanding. Uncertainty calls for proportionate care, not a claim that all risk is gone.</p></article>
+              <article class="p"><header><span class="badge" style="--hue:var(--measure)">3</span><h4>Inclusiveness</h4></header><p>Involve people with different needs in design and testing. A hospital robot tested only with tall, sighted, mobile adults may fail wheelchair users, children or people with low vision. Ask who was absent and what the test couldn't reveal.</p></article>
+              <article class="p"><header><span class="badge" style="--hue:var(--manage)">4</span><h4>Accountability</h4></header><p>Name who approves, maintains, monitors and can stop the system. If a warehouse robot injures someone, “the robot did it” is not a response plan. Employer, supplier, operator and maintenance team need clear duties and records.</p></article>
+              <div class="core"><b>The robotic system</b><span>designed · made · bought · deployed · used, by people who each carry part of the responsibility</span><small>LMS teaching framework</small></div>
+              <article class="p"><header><span class="badge" style="--hue:var(--govern)">5</span><h4>Safety</h4></header><p>Protect physical and psychological wellbeing, not only whether the software runs. A delivery robot needs obstacle detection, safe charging, maintenance, a manual stop, clear status signals and a plan for a blocked corridor.</p></article>
+              <article class="p"><header><span class="badge" style="--hue:var(--map)">6</span><h4>Reversibility</h4></header><p>Make important actions stoppable, correctable or recoverable. If a robot sends the wrong medicine to a ward, staff need to pause deliveries, find the item, correct records and switch to a manual process. Some harms, like a privacy breach or injury, can't literally be undone.</p></article>
+              <article class="p"><header><span class="badge" style="--hue:var(--measure)">7</span><h4>Privacy</h4></header><p>Collect only what a stated purpose needs, protect it, limit access and retention, and explain its use. A robot navigating a corridor may not need to store identifiable video of every patient it passes.</p></article>
+              <article class="p"><header><span class="badge" style="--hue:var(--manage)">8</span><h4>Benefit and harm</h4></header><p>Compare who gets the benefit with who carries the risk. A company may gain speed while workers lose hours or patients lose human contact. A positive total doesn't make an unfair distribution acceptable.</p></article>
+            </div>
+            <figcaption class="figcap" id="f4-cap"><b>Fig. 4:</b> The eight principles from the LMS, each with a concrete example. As a set they are a teaching framework, not a single law or a validated technical test.</figcaption>
+          </figure>
+
+          <h3>Three principles that are easy to confuse</h3>
+          <p class="prose">Safety, precaution and reversibility all sound like “be careful”. The difference is <em>when</em> they act relative to a harmful event.</p>
+          <figure class="plate" aria-labelledby="f5-cap">
+            <p class="plate-title">Before, at, and after the harm</p>
+            <div class="timebar">
+              <div class="t" style="--hue:var(--map)"><small>Before · evidence incomplete</small><h4>Precaution</h4><p>What should we do when we can't yet name every hazard? Pilot small, set stop conditions, collect evidence before scaling.</p></div>
+              <div class="t" style="--hue:var(--measure)"><small>At the moment · known hazards</small><h4>Safety</h4><p>Controls for hazards we can name: obstacle detection, speed limits, manual stop. A robot can avoid collisions yet still collect excessive data or exclude people who can't use its interface.</p></div>
+              <div class="t" style="--hue:var(--manage)"><small>After · limiting the damage</small><h4>Reversibility</h4><p>Pause, correct, recover. It limits damage after a bad action; it never replaces preventing foreseeable harm.</p></div>
+            </div>
+            <figcaption class="figcap" id="f5-cap"><b>Fig. 5:</b> Schematic. Safety is one part of ethics, not the whole of it.</figcaption>
+          </figure>
+          <p class="note"><strong>Limit:</strong> the eight principles are the LMS's teaching framework. A principle helps a team ask a better question; evidence and the applicable rules decide what action is justified.</p>
+
+          <h3>A second framework: the OECD's five AI principles</h3>
+          <p class="prose">The OECD's principles are a separate, international recommendation for responsible AI, first adopted in 2019 and revised on 3 May 2024. Each heading names a value to protect; the questions show what evidence to look for in a real project. Neither framework replaces checking the law that applies to a particular use.</p>
+          <div class="oecd">
+            <article class="panel" style="--hue:var(--ctx)"><header><span class="badge">1</span><h4>Inclusive growth, sustainable development and well-being</h4></header><div class="body"><p>AI should benefit people and the planet, not only make a task faster or cheaper. The OECD highlights human capability and creativity, inclusion of underrepresented people, reduced inequality and protection of natural environments.</p><ul><li>Who gains time, money, safety or access? Who loses income, control, privacy or opportunity?</li><li>Could people be excluded because they lack access, have different needs or are poorly represented in the data?</li><li>What energy, materials, waste or other environmental effects come with it?</li></ul><p class="eg"><strong>Factory:</strong> a robot arm may cut lifting injuries and raise output. Check whether workers lose hours, face faster work or get paid training for new roles, and whether the gains reach them.</p></div></article>
+            <article class="panel" style="--hue:var(--data)"><header><span class="badge">2</span><h4>Rule of law, human rights and democratic values, including fairness and privacy</h4></header><div class="body"><p>Respect dignity, freedom, autonomy, equality, non-discrimination, privacy, diversity, social justice and labour rights throughout the system's life. People need real human agency and oversight, including when a system is misused or used beyond its purpose. The 2024 revision also addresses AI-amplified misinformation while protecting freedom of expression.</p><ul><li>Could it affect access to work, care, services, safety or a person's choices?</li><li>Are people treated differently or monitored without good reason? Can they object, correct data or reach someone with authority?</li><li>Have affected people had a real chance to raise concerns?</li></ul><p class="eg"><strong>Hiring:</strong> check whether historic labels encode past exclusion, whether each data field is necessary, and whether applicants can correct a record or challenge a rejection.</p></div></article>
+            <article class="panel" style="--hue:var(--model)"><header><span class="badge">3</span><h4>Transparency and explainability</h4></header><div class="body"><p>Tell people when AI is involved and what it can and can't do. Give information suited to the audience about inputs and the factors behind an output, where useful and feasible. People harmed by an output need enough information to challenge it.</p><ul><li>Would a user or affected person know AI was used, and what role it played?</li><li>Can you explain the relevant inputs, limits and reasons in plain language?</li><li>Is there a usable route to question, correct or appeal?</li></ul><p class="eg"><strong>Hiring:</strong> “the computer rejected you” explains nothing. Say which parts of the application were considered, what the tool can't assess, and how to request a review.</p></div></article>
+            <article class="panel" style="--hue:var(--task)"><header><span class="badge">4</span><h4>Robustness, security and safety</h4></header><div class="body"><p>A system should keep working as intended despite failures, changed conditions or attack. Assess safety and security across design, testing, deployment and operation, and build a way to override, repair or safely decommission a system that causes undue harm.</p><ul><li>What happens with poor inputs, unusual cases, outages, cyberattacks or changed conditions?</li><li>Did tests use realistic users and settings? Do monitoring and incident response continue after launch?</li><li>Can people switch to a safe fallback, correct an error or stop it?</li></ul><p class="eg"><strong>Hospital robot:</strong> it needs a safe response to a blocked corridor, a wrong item, lost network or an emergency, not just a good demo on an empty route.</p></div></article>
+            <article class="panel" style="--hue:var(--manage)"><header><span class="badge">5</span><h4>Accountability</h4></header><div class="body"><p>AI actors take responsibility in proportion to their role, context and ability to act. Manage risk across the lifecycle, with developers, data suppliers, deployers and users cooperating. Risks named include bias, rights, safety, security, privacy, labour and intellectual property.</p><ul><li>Who approved the use, checked the evidence, monitors outcomes and handles complaints?</li><li>Who can change, pause or stop it, and what records let them investigate an incident?</li><li>Are supplier responsibilities and downstream risks clear?</li></ul><p class="eg"><strong>In practice:</strong> “the algorithm did it” doesn't identify who has to fix a harmful result.</p></div></article>
+          </div>
+
+          <div class="worked"><span class="wlabel">Apply all five to one proposal</span><h4>Review an AI hiring ranker before collecting any applicant data.</h4>
+            <ol class="strip chev" style="grid-template-columns:repeat(5,minmax(0,1fr));margin:1rem 0" aria-label="Five OECD questions applied to a hiring ranker">
+              <li style="--hue:#8a5a00;--tint:var(--pale-gold)"><b>Benefit</b><span>Who gains, who bears the cost?</span></li>
+              <li style="--hue:var(--blue-ink);--tint:var(--pale-blue)"><b>Rights</b><span>Is data use and treatment fair?</span></li>
+              <li style="--hue:var(--teal-ink);--tint:var(--pale-teal)"><b>Explain</b><span>Can applicants understand and challenge it?</span></li>
+              <li style="--hue:var(--task);--tint:var(--pale-navy)"><b>Test</b><span>Does it work safely across roles and groups?</span></li>
+              <li style="--hue:var(--manage);--tint:#dde4ee"><b>Own</b><span>Who monitors, responds, can stop it?</span></li>
+            </ol>
+            <p>First define the job-related purpose and compare a non-AI process. Then map affected people, check data relevance and rights, test error patterns and security, explain the tool's role and limits, and name the people who can respond. If the team can't answer one of these, record the gap and close it before deployment. This sequence is a teaching aid; the OECD doesn't prescribe it.</p></div>
+          <div class="src"><strong>Sources, after the explanation:</strong> the eight principles are the LMS's teaching framework. The OECD principles and their scope: <a href="https://www.oecd.org/en/topics/ai-principles.html" target="_blank" rel="noopener noreferrer">AI Principles overview</a> and <a href="https://legalinstruments.oecd.org/en/instruments/OECD-LEGAL-0449" target="_blank" rel="noopener noreferrer">Recommendation of the Council on AI, OECD/LEGAL/0449</a> (amended 3 May 2024). Related: <a href="https://www.unesco.org/en/legal-affairs/recommendation-ethics-artificial-intelligence" target="_blank" rel="noopener noreferrer">UNESCO Recommendation on AI ethics</a> and NIST's <a href="https://airc.nist.gov/airmf-resources/airmf/3-sec-characteristics/" target="_blank" rel="noopener noreferrer">AI risks and trustworthiness</a>. None of these replaces applicable law.</div>
+        </section>
+
+        <section class="sec" id="dilemmas">
+          <div class="sec-head"><span class="sec-num" aria-hidden="true">03</span><div><p class="eyebrow">LMS section 3 · two bad outcomes don't make an easy answer</p><h2>A dilemma is a clash between reasons we take seriously.</h2></div></div>
+          <p class="lead">The LMS uses the familiar autonomous-car case: the brakes fail, and the car must either continue or swerve. One path may injure passengers; the other may injure pedestrians. The point isn't that the car should calculate whose life matters more. It's to expose what people value when every option on offer is bad.</p>
+
+          <figure class="plate" aria-labelledby="f6-cap">
+            <p class="plate-title">The dilemma frame starts late</p>
+            <div class="dilemma">
+              <div class="upstream"><h4>Choices made before the emergency (usually left out of the story)</h4><ol><li>Who set the speed limit for this road and this vehicle?</li><li>Were the brakes maintained and their failure modes tested?</li><li>Could the fault be detected sooner, or the car slow down safely?</li><li>Was it tested in rain, road works and with sensor failure?</li></ol></div>
+              <div class="fail-pt" aria-hidden="true">⚠<span>brakes fail</span></div>
+              <div class="fork">
+                <div style="--hue:var(--manage)"><b>Continue straight</b>Risk falls on the passengers.</div>
+                <div style="--hue:var(--measure)"><b>Swerve</b>Risk falls on the pedestrians.</div>
+                <p class="fork-label">The only two options the thought experiment allows</p>
+              </div>
+            </div>
+            <figcaption class="figcap" id="f6-cap"><b>Fig. 6:</b> Schematic. A split-second dilemma can hide the design choices that created it. Ethical review covers prevention and responsibility, not only the final choice.</figcaption>
+          </figure>
+
+          <h3>Two ways of reasoning about the fork</h3>
+          <div class="grid2">
+            <article class="card" style="--hue:var(--govern)"><span class="tag" style="--hue:var(--blue-ink)">Reason A · consequences</span><h4>Reduce the amount of harm</h4><p>A utilitarian-style argument asks which action is likely to cause fewer deaths or injuries overall. It makes consequences visible, but counts and probabilities may be uncertain, and a smaller total can still put an unfair burden on one person or group.</p></article>
+            <article class="card" style="--hue:var(--measure)"><span class="tag" style="--hue:var(--gold-ink)">Reason B · rights and duties</span><h4>Respect rights and duties</h4><p>A rights- or duty-based argument asks whether the system may deliberately expose someone to danger, whether people are treated equally, and whether the choice respects their rights. It resists sacrificing one person for a better total, but may not say what to do when duties conflict.</p></article>
+          </div>
+
+          <h3>What Moral Machine can and can't tell us</h3>
+          <div class="prose"><p>The linked Moral Machine lets visitors judge stylised road dilemmas and compare their choices with everyone else's. That shows patterns in what participants chose. It can't establish one correct rule, represent everyone equally, or decide public policy: participants self-select, a small set of scenarios limits what can be chosen, and choices in a game aren't behaviour under real conditions.</p><p>When looking at a result, ask who was invited, who took part, how the choices were worded, which options were left out, and how disagreement is shown. A majority preference is never permission to violate rights or discriminate against a group.</p></div>
+          <div class="src"><strong>Read after the explanation:</strong> <a href="https://www.moralmachine.net/" target="_blank" rel="noopener noreferrer">Moral Machine</a> and its on-site instructions. The full LMS challenge and its captured explanation are in <a href="lms-accordion-capture.md">lms-accordion-capture.md</a>. The Moral Machine explainer video was found, but no transcript was available.</div>
+        </section>
+
+        <section class="sec" id="automation">
+          <div class="sec-head"><span class="sec-num" aria-hidden="true">04</span><div><p class="eyebrow">LMS section 4 · the robot arm and the worker</p><h2>Automation changes jobs, working conditions and who gets the gain.</h2></div></div>
+          <p class="lead">The LMS animation shows a robotic arm moving cans from one conveyor belt into boxes. The arm can do a repetitive task consistently and keep people away from a hazardous line. The ethical issue is bigger than “robots take jobs”: the change affects safety, pay, control, skills, workload and who receives the productivity gain.</p>
+
+          <figure class="plate" aria-labelledby="f7-cap">
+            <p class="plate-title">One robot arm, three places the effects land</p>
+            <div class="panels c3 linked">
+              <article class="panel"><header><h4>The employer</h4></header><div class="body"><ul><li><strong>Possible gains:</strong> steady throughput, fewer repetitive-strain injuries, lower running costs.</li><li><strong>Risks:</strong> installation cost, downtime, cyber or safety failures, depending on a system staff can't repair.</li></ul></div></article>
+              <article class="panel"><header><h4>Workers</h4></header><div class="body"><ul><li>Some move into maintenance or quality roles.</li><li>Others lose hours, bargaining power or the job.</li><li>A retained job may become faster-paced or more closely monitored.</li></ul></div></article>
+              <article class="panel"><header><h4>The wider community</h4></header><div class="body"><ul><li>More output may support local business and services.</li><li>Lost wages may concentrate in one area.</li><li>Training only helps if people can access it and suitable jobs exist.</li></ul></div></article>
+            </div>
+            <figcaption class="figcap" id="f7-cap"><b>Fig. 7:</b> Layout follows NIST's potential-harms figure. The connectors mark that a change in one column usually moves the others.</figcaption>
+          </figure>
+
+          <h3>Replace, assist or redesign</h3>
+          <p class="prose">These three words describe what happens to the task, not whether the outcome is good. None is automatically better; assess actual conditions before and after.</p>
+          <figure class="plate" aria-labelledby="f8-cap">
+            <p class="plate-title">Who does the task after automation?</p>
+            <div class="taskbars">
+              <div class="taskbar"><b>Replace</b><div class="bar"><span class="m" style="flex:1">Machine does the whole task</span></div><p>The person no longer performs it. Ask where they go and who decided.</p></div>
+              <div class="taskbar"><b>Assist</b><div class="bar"><span class="m" style="flex:1.2">Machine: the lifting</span><span class="h" style="flex:1">Person: judgment, checks, exceptions</span></div><p>The machine takes a defined part; the person keeps other work or judgment.</p></div>
+              <div class="taskbar"><b>Redesign</b><div class="bar"><span class="m" style="flex:1">Machine</span><span class="h" style="flex:1">Person: new tasks</span><span class="n" style="flex:.9">New risk: pace, monitoring</span></div><p>The workflow itself changes, which can create new risks such as work intensification.</p></div>
+            </div>
+            <div class="key" aria-hidden="true"><span><i style="background:var(--manage)"></i>machine</span><span><i style="background:var(--pale-gold)"></i>person</span><span><i style="background:repeating-linear-gradient(135deg,#fde3e0 0 4px,#fff 4px 8px)"></i>new risk introduced by the change</span></div>
+            <figcaption class="figcap" id="f8-cap"><b>Fig. 8:</b> Schematic. Bar lengths are illustrative, not measured.</figcaption>
+          </figure>
+
+          <div class="worked"><span class="wlabel">Illustrative scenario · not an LMS finding</span><h4>A safer line can still be an unfair transition.</h4><p>A factory installs a robot to lift heavy boxes. Injuries fall, but management also cuts a shift and brings in a dashboard that measures each worker's pauses. A review shouldn't stop at the injury figure. Ask who was consulted, whether jobs or hours changed, whether the monitoring is necessary and proportionate, how workers can contest inaccurate records, and whether the productivity gain funds retraining or safer roles.</p></div>
+          <div class="prose"><p>Practical safeguards include consulting workers before buying, a job-impact assessment, paid training, redeployment options, safe staffing levels, clear limits on productivity monitoring, and a way to raise concerns without retaliation. If the robot reduces a hazard, record that benefit too. Be honest about both gains and losses.</p></div>
+          <div class="src"><strong>Read after the explanation:</strong> the <a href="lms-section-capture.md#4-ethics-of-automation">LMS automation activity</a> asks you to consider company, worker and societal effects, the original work conditions, and how to reduce the disadvantages.</div>
+        </section>
+
+        <section class="sec" id="healthcare">
+          <div class="sec-head"><span class="sec-num" aria-hidden="true">05</span><div><p class="eyebrow">LMS section 5 · service, clinical support and human care</p><h2>A useful robot can free staff time and still change how care feels.</h2></div></div>
+          <p class="lead">The LMS lists hospital tasks such as delivering food and medication, taking temperatures, cleaning wards, answering common questions and carrying equipment. These aren't the same kind of system. A corridor delivery robot, a surgical assistant and software that suggests a diagnosis affect patients differently and need different controls.</p>
+
+          <figure class="plate" aria-labelledby="f9-cap">
+            <p class="plate-title">Healthcare uses, from back-of-house to clinical</p>
+            <p class="spectrum-axis" aria-hidden="true"><span>Further from the patient</span><span>Closer to clinical judgment →</span></p>
+            <div class="matrix" style="grid-template-columns:repeat(4,minmax(0,1fr))">
+              <div class="mcol" style="--hue:#7f93ad;--tint:#eef1f5"><div class="mhead">Delivery / transport<small>moves things</small></div><div class="mcell"><span class="rowlab">Possible benefit</span>Moves supplies and equipment so staff make fewer trips.</div><div class="mcell"><span class="rowlab">Investigate</span>Could it block access, collide with a patient, expose sensitive labels or fail during an evacuation? Is there a human fallback?</div></div>
+              <div class="mcol" style="--hue:#5d7795;--tint:#e9edf3"><div class="mhead">Cleaning / disinfection<small>repeats a routine</small></div><div class="mcell"><span class="rowlab">Possible benefit</span>Repeats a cleaning pattern consistently and reduces some staff exposure.</div><div class="mcell"><span class="rowlab">Investigate</span>Does it reach the right surfaces? Who checks it worked? What about rooms and people it can't work around safely?</div></div>
+              <div class="mcol" style="--hue:var(--slate);--tint:#e5eaf1"><div class="mhead">Patient-facing service<small>talks to patients</small></div><div class="mcell"><span class="rowlab">Possible benefit</span>Answers routine questions or gives reminders at any hour.</div><div class="mcell"><span class="rowlab">Investigate</span>Can patients understand it, decline it or reach a person? Could it treat an urgent request as routine?</div></div>
+              <div class="mcol" style="--hue:var(--manage);--tint:#dfe5ee"><div class="mhead">Surgical / decision support<small>informs clinical work</small></div><div class="mcell"><span class="rowlab">Possible benefit</span>Assists a trained clinician with a specific task or information.</div><div class="mcell"><span class="rowlab">Investigate</span>What stays the clinician's responsibility? How are errors caught? Does the patient understand its role and have a real choice where appropriate?</div></div>
+            </div>
+            <figcaption class="figcap" id="f9-cap"><b>Fig. 9:</b> Column layout follows NIST's actors-by-lifecycle figure. The closer a use gets to clinical judgment, the more the controls must cover responsibility and consent, not just navigation.</figcaption>
+          </figure>
+
+          <h3>Medication delivery is a workflow, not a journey</h3>
+          <p class="prose">A robot carries labelled medicine from the pharmacy to a ward. A demo usually tests one step: getting down the corridor. The ethical review has to cover all five.</p>
+          <figure class="plate" aria-labelledby="f10-cap">
+            <p class="plate-title">Five steps; the demo tests one</p>
+            <ol class="flow5">
+              <li><b>Load</b>Pharmacy places the correct, labelled item.<span class="chk">Who checks contents?</span></li>
+              <li class="hl"><b>Travel</b>Robot navigates corridors and lifts.<span class="chk">Stops safely if blocked?</span></li>
+              <li><b>Arrive</b>Robot reaches the right ward.<span class="chk">Labels kept private?</span></li>
+              <li><b>Hand over</b>A named person takes the item.<span class="chk">Never left unattended?</span></li>
+              <li><b>Confirm</b>Receipt is recorded; failures alert staff.<span class="chk">Manual fallback tested?</span></li>
+            </ol>
+            <div class="bracket" aria-hidden="true"><span style="grid-column:2">What a navigation demo proves</span><span class="all">What the ethical review must cover: the medicine reaches the right patient, safely and privately</span></div>
+            <figcaption class="figcap" id="f10-cap"><b>Fig. 10:</b> Illustrative service workflow, not clinical advice or data from a real system.</figcaption>
+          </figure>
+
+          <h3>Dignity is practical</h3>
+          <div class="prose"><p>A patient may welcome a robot that brings supplies and dislike one that replaces conversation during a frightening stay. Needs differ by person, condition, language, disability and length of stay. Ask patients and carers rather than assuming. Keep a route to a person; make the robot's identity and limits clear; protect sensitive conversations; and don't make access to essential care depend on a difficult interface.</p><p>In clinical settings, reliability, maintenance, infection control, cybersecurity and training are safety issues. Privacy, consent, accessibility and human contact are ethical issues too. A system can do its narrow technical task correctly and still be unsuitable for the care process around it.</p></div>
+          <div class="src"><strong>Read after the explanation:</strong> UNESCO's <a href="https://www.unesco.org/en/legal-affairs/recommendation-ethics-artificial-intelligence" target="_blank" rel="noopener noreferrer">AI ethics Recommendation</a> names health and social wellbeing as a policy area. The LMS healthcare activity and its questions are in <a href="lms-accordion-capture.md#5-ethics-of-healthcare-robotics">lms-accordion-capture.md</a>.</div>
+        </section>
+
+        <section class="sec" id="data-decisions">
+          <div class="sec-head"><span class="sec-num" aria-hidden="true">06</span><div><p class="eyebrow">LMS loan scenario (section 8) · current UK law, explained before the links</p><h2>Data protection covers information and its use. Automated-decision rules cover a narrower case.</h2></div></div>
+          <p class="lead">What changes when an organisation uses personal information to make an important decision about someone without meaningful human involvement? Start with a situation. A lender receives a loan application; a computer checks the applicant's data, produces a low score and automatically refuses the loan. The applicant may not know which information mattered, whether it was wrong, or how to ask for reconsideration.</p>
+
+          <figure class="plate" aria-labelledby="f11-cap">
+            <p class="plate-title">Four separate questions, applied to the loan refusal</p>
+            <ol class="gates">
+              <li style="--hue:var(--data)"><p class="q">Is personal data being processed?</p><div class="a"><p><strong>Data protection</strong> covers information relating to an identifiable person. It applies whether a computer ranks the case, a human reads it, or no AI is involved at all.</p></div><p class="loan"><b>Loan case</b><br>Yes: repayment records, income, a postcode feature.</p></li>
+              <li style="--hue:var(--model)"><p class="q">Is it profiling?</p><div class="a"><p><strong>Profiling</strong> is automated processing used to analyse or predict something about a person: economic situation, health, interests, likely behaviour. A profile may inform a decision; it isn't the same as making it.</p></div><p class="loan"><b>Loan case</b><br>Yes: the score predicts likelihood of repayment.</p></li>
+              <li style="--hue:var(--task)"><p class="q">Is there meaningful human involvement?</p><div class="a"><p>A <strong>solely automated</strong> decision has none. A simple rule can be solely automated without any AI; an AI tool can instead give a recommendation that a person genuinely assesses.</p></div><p class="loan"><b>Loan case</b><br>No: the refusal is sent straight from the score.</p></li>
+              <li style="--hue:var(--manage)"><p class="q">Does it have a legal or similarly significant effect?</p><div class="a"><p>The special UK GDPR safeguards concern <strong>significant decisions</strong>. Routine sorting may not qualify; refusing credit, a job or an important service could, depending on the facts.</p></div><p class="loan"><b>Loan case</b><br>Probably; the lender must assess, not assume.</p></li>
+            </ol>
+            <figcaption class="figcap" id="f11-cap"><b>Fig. 11:</b> Teaching schematic, not a legal decision tree. Each question is answered separately on the actual facts; one system can fit several at once.</figcaption>
+          </figure>
+
+          <h3>Don't confuse these four things</h3>
+          <div class="scroll-table" role="region" tabindex="0" aria-label="Comparison of data protection, profiling, automated decisions and AI high-risk classification"><table><caption>Related terms answer different questions; one system may fit several rows.</caption><thead><tr><th>Term</th><th>Question it answers</th><th>Example</th><th>What it doesn't tell you</th></tr></thead><tbody>
+            <tr><td>Personal-data processing</td><td>Is information about an identifiable person being collected or used?</td><td>A recruiter stores CVs in a database.</td><td>Whether an important decision is automated.</td></tr>
+            <tr><td>Profiling</td><td>Is personal information used automatically to evaluate or predict something about someone?</td><td>A lender estimates likelihood of repayment.</td><td>A profile may inform a human decision; it isn't automatically the final decision.</td></tr>
+            <tr><td>Solely automated significant decision</td><td>Is a consequential decision made without meaningful human involvement?</td><td>A loan refusal sent automatically from a score.</td><td>It isn't defined by whether the system uses AI. Simple rules can qualify.</td></tr>
+            <tr><td>EU AI Act high-risk classification</td><td>Does the AI Act class this system's intended use as high-risk?</td><td>Some AI use in employment or education falls in listed high-risk areas.</td><td>A separate EU legal test, not the UK GDPR test for a solely automated significant decision.</td></tr>
+          </tbody></table></div>
+
+          <h3>What data protection asks across the whole process</h3>
+          <div class="duties">
+            <div style="--hue:var(--govern)"><b><i>1</i>Purpose</b><p>Why is each piece of data needed for this decision? Don't collect extra information just because it's available.</p></div>
+            <div style="--hue:var(--govern)"><b><i>2</i>Lawful basis</b><p>Which basis lets this organisation process the data here? A consent checkbox doesn't automatically make use lawful.</p></div>
+            <div style="--hue:var(--map)"><b><i>3</i>Accuracy</b><p>Could the record be outdated, incomplete or linked to the wrong person? How is it corrected before harm follows?</p></div>
+            <div style="--hue:var(--map)"><b><i>4</i>Transparency</b><p>Can the person understand what's used, why, and what the decision may mean for them?</p></div>
+            <div style="--hue:var(--measure)"><b><i>5</i>Security</b><p>Who can see or change the data? How are breaches, access and supplier handling controlled?</p></div>
+            <div style="--hue:var(--measure)"><b><i>6</i>Retention</b><p>How long is it kept, and why? Delete or anonymise it when no longer needed, subject to legal requirements.</p></div>
+            <div style="--hue:var(--manage)"><b><i>7</i>Rights and review</b><p>Can a person access relevant information, correct inaccuracies, object where rights allow, and challenge the outcome?</p></div>
+            <div style="--hue:var(--manage)"><b><i>8</i>Accountability</b><p>Can the organisation show what it decided about purpose, risk, suppliers, safeguards and ongoing checks?</p></div>
+          </div>
+
+          <div class="worked"><span class="wlabel">Worked example · fictional loan decision</span><h4>From automatic refusal to a reviewable process</h4><p><strong>Initial version:</strong> the system scores applications using repayment records, income and a postcode-derived feature. Below a threshold, the application is refused automatically. One problem could be an inaccurate record; another, a feature acting as an unfair proxy for disadvantage. The model's overall accuracy answers neither.</p><p><strong>Run the four questions:</strong> personal data is processed. Credit access may have a significant effect, but the organisation must assess the law and facts rather than assume every score crosses the threshold. If no person meaningfully takes part before the refusal, it may be solely automated. These are separate checks.</p><p><strong>Improved process:</strong> test whether each input is relevant and necessary; check source accuracy and group-level outcomes; give intelligible information; let the person correct information and explain circumstances; make a trained reviewer available with access to the case, time and authority to change the result. Record reviews and monitor outcomes. This makes the process more responsible; it doesn't by itself prove the lending criteria are lawful or fair.</p></div>
+
+          <h3>“A human can override it” doesn't settle the question</h3>
+          <p class="prose">A reviewer who sees only a red “decline” label, handles hundreds of cases an hour, has no access to the underlying information and is marked down for changing recommendations will probably rubber-stamp the system. People tend to defer to a system that looks objective; this is called <strong>automation bias</strong>, and training alone won't fix a workflow that rewards quick approval.</p>
+          <figure class="plate" aria-labelledby="f12-cap">
+            <p class="plate-title">How much real influence does the human have?</p>
+            <div class="influence">
+              <div class="lvl"><h4>Automated assistance</h4><div class="meter m5" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div><span class="meter-lab">Human influence: real</span><p>A person examines relevant evidence and owns the final decision. Data-protection duties still apply.</p></div>
+              <div class="lvl"><h4>Rubber stamp</h4><div class="meter m1" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div><span class="meter-lab">Human influence: nominal</span><p>A person clicks “confirm” but doesn't assess the case or can't change it. If their role is only nominal, the process may still count as solely automated.</p></div>
+              <div class="lvl"><h4>Automatic outcome</h4><div class="meter m0" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div><span class="meter-lab">Human influence: none</span><p>The score directly accepts or refuses. If significant and based solely on automated processing of personal data, specific UK GDPR safeguards apply.</p></div>
+            </div>
+            <div class="needs" aria-label="What meaningful review needs"><span>Information beyond the score</span><span>Competence</span><span>Time</span><span>Authority to disagree</span><span>A workload that allows it</span></div>
+            <figcaption class="figcap" id="f12-cap"><b>Fig. 12:</b> A person in the workflow isn't the same as a person in control. The bottom row is what turns the first column into reality.</figcaption>
+          </figure>
+
+          <h3>What the UK safeguards mean in plain language</h3>
+          <div class="prose">
+            <p>For a significant decision based solely on automated processing, the amended UK GDPR framework requires safeguards including: information about the decision, a way to make representations, a way to obtain human intervention, and a way to contest it. The route has to be usable: the person needs to know where to go, how to explain an error or circumstance, and how a competent reviewer will reconsider. Keep a record of challenges and outcomes. If reviewers keep changing decisions for the same reason, fix the underlying data or rule rather than treating each correction as a one-off.</p>
+            <p>Human review has its own limits and costs: it exposes personal information to more people, and reviewers bring their own biases. Give reviewers only what they need, protect access, test the review process, and check that similar cases get similar outcomes. A safeguard needs monitoring too.</p>
+            <p>The Data (Use and Access) Act 2025 changed this area of UK law. The relevant amendments took effect on <strong>5 February 2026</strong>. For significant decisions using ordinary personal data, the framework is more permissive than the old rule in some circumstances, but the safeguards remain. Significant decisions using special-category data (such as health, racial or biometric data) face extra restrictions. Processing still needs a valid lawful basis and must meet the other data-protection duties. The details depend on the controller, data, decision and statutory conditions.</p>
+            <p>Data protection isn't equality law, consumer law, employment law or safety law. A process can meet a data-protection requirement and still produce a discriminatory or harmful outcome that has to be assessed under other rules. And “we use a human” doesn't answer whether the criteria are suitable.</p>
+          </div>
+          <p class="note"><strong>Jurisdiction boundary:</strong> this describes the UK position as checked on 14 October 2026. EU data protection law has its own rules, and the EU AI Act is a separate regime. Don't carry UK tests or dates across borders without checking.</p>
+          <div class="src"><strong>Sources, after the explanation:</strong> <a href="https://www.legislation.gov.uk/ukpga/2025/18/section/80" target="_blank" rel="noopener noreferrer">DUAA 2025, section 80</a> sets out the UK GDPR amendments and safeguards; the <a href="https://www.gov.uk/guidance/data-use-and-access-act-2025-data-protection-and-privacy-changes" target="_blank" rel="noopener noreferrer">GOV.UK DUAA summary</a> explains the policy change; the <a href="https://ico.org.uk/about-the-ico/what-we-do/legislation-we-cover/data-use-and-access-act-2025/the-data-use-and-access-act-2025-duaa-summary-of-the-changes/data-protection/" target="_blank" rel="noopener noreferrer">ICO DUAA overview</a> summarises the amended position. The ICO page on <a href="https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/artificial-intelligence/guidance-on-ai-and-data-protection/how-do-we-ensure-individual-rights-in-our-ai-systems/" target="_blank" rel="noopener noreferrer">meaningful human review</a> is still useful for review design but is marked under review following the Act. See also the <a href="https://ico.org.uk/for-the-public/your-rights-relating-to-decisions-being-made-about-you-without-human-involvement/" target="_blank" rel="noopener noreferrer">ICO rights overview for individuals</a>.</div>
+        </section>
+
+        <section class="sec" id="military">
+          <div class="sec-head"><span class="sec-num" aria-hidden="true">07</span><div><p class="eyebrow">LMS section 6 · support, targeting and control</p><h2>“A human is involved” is not enough information.</h2></div></div>
+          <p class="lead">The LMS separates unarmed support robots from systems that can acquire or engage targets, then distinguishes a human who must confirm an action from a human supervisor who can intervene. The label matters less than the authority, information, time and ability people actually have when force may be used.</p>
+
+          <figure class="plate" aria-labelledby="f13-cap">
+            <p class="plate-title">Where the human sits in each arrangement</p>
+            <div class="lanes">
+              <div class="lane"><b>Unarmed robot<small>course category 1</small></b><div class="steps"><span class="sys">Robot transports, inspects or senses</span><i>→</i><span class="hum">Person decides what to do with the report</span><i>→</i><span class="none">No weapon fired by the robot</span></div></div>
+              <div class="lane"><b>Human-in-the-loop<small>course category 2</small></b><div class="steps"><span class="sys">System detects and tracks a target</span><i>→</i><span class="hum">Human must approve firing</span><i>→</i><span class="sys">System fires</span></div></div>
+              <div class="lane"><b>Human-on / over-the-loop<small>course category 3</small></b><div class="steps"><span class="sys">System detects, selects and fires</span><i>⇄</i><span class="watch">Human monitors; can intervene or stop</span></div></div>
+            </div>
+            <div class="key" aria-hidden="true"><span><i style="background:var(--manage)"></i>system acts</span><span><i style="background:var(--pale-gold);border:2px solid var(--gold)"></i>human decision point</span><span><i style="background:#fff;border:2px dashed var(--gold)"></i>human supervision only</span></div>
+            <figcaption class="figcap" id="f13-cap"><b>Fig. 13:</b> The course's three broad categories as swimlanes. Real system labels and boundaries vary.</figcaption>
+          </figure>
+
+          <div class="scroll-table" role="region" tabindex="0" aria-label="Ethical questions for each military control arrangement"><table><caption>Questions to ask of each arrangement.</caption><thead><tr><th>Course category</th><th>Ethical questions</th></tr></thead><tbody>
+            <tr><td>Unarmed robot</td><td>Can it expose soldiers or civilians to new danger? Is the surveillance proportionate? Who acts on its sensor report?</td></tr>
+            <tr><td>Human-in-the-loop</td><td>Does the operator see enough context? Is there time to assess identity and uncertainty, or does the interface push a quick confirmation?</td></tr>
+            <tr><td>Human-on/over-the-loop</td><td>Can the operator spot an error in time? How many systems is one person watching? Is a stop technically possible, and does it work in the field?</td></tr>
+          </tbody></table></div>
+
+          <div class="worked"><span class="wlabel">Illustrative control test</span><h4>A target-classification alert arrives with uncertain data.</h4><p>In a human-in-the-loop arrangement, the operator needs enough context to accept, reject or ask for more information before firing. If the screen shows only a confidence number and a countdown, the approval is formally human while the real decision is made by the system and the time pressure. In an on-the-loop arrangement, the supervisor also needs reliable alerts, authority to stop, a manageable workload and a communications link that works. An override that can't be used in time isn't control.</p></div>
+          <div class="prose"><p>Responsibility is spread across command, procurement, system design, training, maintenance and operation. Spread out doesn't mean gone. Teams should define who authorises deployment, who checks targeting rules, who logs decisions, who investigates an incident and who can suspend operation. Military law and international humanitarian law are specialist subjects; this guide doesn't assess the legality of any weapon or operation.</p><p>The Future of Life Institute pledge linked by the LMS is an advocacy pledge against lethal autonomous weapons. It states a moral position and asks signatories to commit; it isn't a treaty or law. Keep campaign, ethical argument and enforceable rule distinct.</p></div>
+          <div class="src"><strong>Read after the explanation:</strong> the LMS links to the <a href="https://futureoflife.org/open-letter/lethal-autonomous-weapons-pledge/" target="_blank" rel="noopener noreferrer">Lethal Autonomous Weapons Pledge</a>, dated 2018. Its argument and the capture limits are in <a href="lms-link-exploration.md">lms-link-exploration.md</a>.</div>
+        </section>
+
+        <section class="sec" id="governance">
+          <div class="sec-head"><span class="sec-num" aria-hidden="true">08</span><div><p class="eyebrow">LMS sections 7–9 · make responsibility operational</p><h2>Principles say what matters. Governance makes people act on them.</h2></div></div>
+          <p class="lead">A governance committee isn't useful just because it exists. Its job is to make sure someone with the right knowledge, authority and evidence makes decisions before deployment and throughout use. For the LMS hiring system, that means examining the tool's role, who's affected, what data and criteria matter, which safeguards work, and how applicants can challenge an outcome.</p>
+          <div class="grid2">
+            <article class="card" style="--hue:var(--map)"><span class="tag" style="--hue:var(--teal-ink)">Ethical question</span><h4>What outcome can we justify?</h4><p>Should the employer rank applicants this way? Is the data relevant to the job? Who may be excluded, and what benefit is worth the risk?</p></article>
+            <article class="card" style="--hue:var(--govern)"><span class="tag" style="--hue:var(--blue-ink)">Governance question</span><h4>Who does what, and when?</h4><p>Who approves use, tests it, explains it to applicants, monitors complaints, fixes failures and can pause it? What evidence is needed at each stage?</p></article>
+          </div>
+
+          <h3>A committee that can see the whole decision</h3>
+          <figure class="plate" aria-labelledby="f14-cap">
+            <p class="plate-title">Seats around the hiring-ranker decision</p>
+            <div class="seats">
+              <div style="--hue:var(--ctx)"><b>Recruiters and HR</b>Know the real workflow and time pressures.</div>
+              <div style="--hue:var(--data)"><b>Data and engineering</b>Know the inputs, the model and its limits.</div>
+              <div style="--hue:var(--manage)"><b>Privacy and legal</b>Know which requirements apply.</div>
+              <div style="--hue:var(--data)"><b>Security</b>Know who can access or alter data and model.</div>
+              <div class="hub"><b>Go / no-go</b><span>on using the ranker, and on each expansion</span></div>
+              <div style="--hue:var(--planet)"><b>Workers' representatives</b>See effects on staff the project team may miss.</div>
+              <div style="--hue:var(--planet)"><b>Applicants or candidate advocates</b>Describe what a wrong ranking does to a person.</div>
+              <div style="--hue:var(--model)"><b>Accessibility and fairness testers</b>Check who the process fails.</div>
+              <div style="--hue:var(--manage)"><b>Accountable senior owner</b>Resources the fixes; owns the decision.</div>
+            </div>
+            <figcaption class="figcap" id="f14-cap"><b>Fig. 14:</b> Illustrative membership. Internal specialists don't stand in for the people affected; outside voices only count if their input can change the decision.</figcaption>
+          </figure>
+          <div class="prose"><p>Give the group access to evidence and a clear route to escalate or stop a risky deployment. Separate roles where practical: the person who benefits from deployment shouldn't be the only one deciding it's safe. Record disagreements and unresolved risks rather than smoothing them into a “green” status. Review the use case, not just the model card.</p></div>
+
+          <h3>A repeatable risk review</h3>
+          <figure class="plate" aria-labelledby="f15-cap">
+            <p class="plate-title">Six steps that loop, narrow or stop</p>
+            <ol class="loop">
+              <li style="--hue:var(--ctx)"><b>Set purpose and boundaries</b><p>The decision supported, people involved, intended users, excluded uses, and why AI. Would a simpler non-AI process meet the need with less risk?</p></li>
+              <li style="--hue:var(--data)"><b>Map people, context and failure paths</b><p>Who is directly and indirectly affected? Consider mistakes, misuse, data gaps, automation bias, supplier changes and real workplace pressure.</p></li>
+              <li style="--hue:var(--model)"><b>Assess evidence and uncertainty</b><p>Test data quality, performance where it matters, privacy, accessibility, security and group impacts. Don't hide a weak result inside one accuracy figure.</p></li>
+              <li style="--hue:var(--measure)"><b>Choose controls and owners</b><p>For each important risk: a measure, a named owner, evidence it works and a deadline. Decide which leftover risks are unacceptable and who can reject them.</p></li>
+              <li style="--hue:var(--task)"><b>Approve a limited, monitored use</b><p>Train users, tell affected people, test the fallback, set boundaries. A pilot isn't permission to expand automatically.</p></li>
+              <li style="--hue:var(--manage)"><b>Monitor and respond</b><p>Watch outcomes, complaints, overrides, data drift and incidents. Fix causes, tell people where needed, restore a safe process, pause or retire if controls fail.</p></li>
+            </ol>
+            <p class="loop-back">Monitoring feeds back to step 1 or 2: the review can loop, narrow the use, or stop it</p>
+            <figcaption class="figcap" id="f15-cap"><b>Fig. 15:</b> An instructional synthesis drawn from NIST, ICO and UNESCO guidance; not a sequence any one of them prescribes.</figcaption>
+          </figure>
+
+          <h3>Make one loan risk concrete</h3>
+          <p class="prose">The LMS loan scenario asks how to avoid inadvertent discrimination and privacy violations. A risk record needs to be more specific than “bias risk: medium”. It should trace a route to harm and say what evidence would show the control works.</p>
+          <figure class="plate" aria-labelledby="f16-cap">
+            <p class="plate-title">One line of a risk register, read left to right</p>
+            <div class="panels c4 linked">
+              <article class="panel"><header style="background:#b04a33"><h4>Risk</h4></header><div class="body"><p>Old repayment data wrongly marks a person as high-risk.</p></div></article>
+              <article class="panel"><header style="background:var(--planet)"><h4>Who bears it</h4></header><div class="body"><p>The applicant: refused credit or delayed.</p></div></article>
+              <article class="panel"><header style="background:var(--model)"><h4>Control</h4></header><div class="body"><p>Check provenance and accuracy; give a correction route; require review when data is disputed.</p></div></article>
+              <article class="panel"><header style="background:var(--manage)"><h4>Evidence and owner</h4></header><div class="body"><p>Track corrections, review outcomes, error patterns. Owner: lending operations, plus an independent reviewer.</p></div></article>
+            </div>
+            <figcaption class="figcap" id="f16-cap"><b>Fig. 16:</b> A risk to investigate, not a finding of discrimination. If the evidence shows an unacceptable pattern the team can't fix, the answer may be to narrow or stop the use.</figcaption>
+          </figure>
+
+          <h3>NIST's AI Risk Management Framework</h3>
+          <div class="prose"><p>NIST's AI RMF 1.0 is voluntary guidance for organising how people find, test and respond to AI risks. It isn't a law, a safety certificate or an ethics score. Its core idea is that risk work runs across the system's whole life: before data is collected, while the model is built, during testing, in daily use, and when the system changes or is retired. It has four functions.</p></div>
+          <figure class="plate" aria-labelledby="f17-cap">
+            <p class="plate-title">NIST AI RMF · Figure 5 redrawn</p>
+            <div class="f5">
+              <p class="f5-title">AI Risk Management Framework</p>
+              <div class="f5-card f5-map" style="--hue:var(--map)"><span class="badge"><svg aria-hidden="true"><use href="#i-map"/></svg></span><h4>Map</h4><p>Context is recognised and risks related to that context are identified.</p></div>
+              <div class="f5-orbit"><div class="f5-gov"><div><svg aria-hidden="true"><use href="#i-govern"/></svg><b>Govern</b><span>A culture of risk management is built and kept present.</span></div></div></div>
+              <div class="f5-card f5-measure" style="--hue:var(--measure)"><span class="badge"><svg aria-hidden="true"><use href="#i-measure"/></svg></span><h4>Measure</h4><p>Identified risks are assessed, analysed or tracked.</p></div>
+              <p class="f5-note">The grey orbit: Map, Measure and Manage inform each other, in any order, repeatedly.</p>
+              <p class="f5-note2">The coloured ring: Govern runs through all three.</p>
+              <div class="f5-card f5-manage" style="--hue:var(--manage)"><span class="badge"><svg aria-hidden="true"><use href="#i-manage"/></svg></span><h4>Manage</h4><p>Risks are prioritised and acted on according to their projected impact.</p></div>
+            </div>
+            <figcaption class="figcap" id="f17-cap"><b>Fig. 17:</b> Redrawn from NIST AI RMF 1.0, Figure 5: functions organise AI risk management at the highest level. Governance is cross-cutting and informs the other three. Teaching redraw, not an official NIST image.</figcaption>
+          </figure>
+
+          <h3 id="nist-risk">Frame the risk: what could happen, and to whom?</h3>
+          <div class="prose"><p>NIST treats risk as a combination of <strong>how likely an event is</strong> and <strong>how serious its consequences would be</strong>. A risk review isn't just multiplying two numbers. Name the event, the people or places affected, the route from system behaviour to harm, the evidence behind the estimate and the uncertainty that remains. Record benefits too, and ask who receives them.</p></div>
+          <figure class="plate" aria-labelledby="f18-cap">
+            <p class="plate-title">Examples of potential harms</p>
+            <div class="panels c3 linked">
+              <article class="panel"><header><h4>Harm to people</h4></header><div class="body"><ul><li><strong>Individual:</strong> a person's civil liberties, rights, physical or psychological safety, or economic opportunity.</li><li><strong>Group or community:</strong> for example, discrimination against a population sub-group.</li><li><strong>Societal:</strong> democratic participation or access to education.</li></ul></div></article>
+              <article class="panel"><header><h4>Harm to an organisation</h4></header><div class="body"><ul><li>Its business operations.</li><li>Security breaches or monetary loss.</li><li>Its reputation.</li></ul></div></article>
+              <article class="panel"><header><h4>Harm to an ecosystem</h4></header><div class="body"><ul><li>Interconnected and interdependent elements and resources.</li><li>The global financial system, supply chains or related systems.</li><li>Natural resources, the environment and the planet.</li></ul></div></article>
+            </div>
+            <figcaption class="figcap" id="f18-cap"><b>Fig. 18:</b> Redrawn from NIST AI RMF 1.0, Figure 1. Kinds of possible impact, not findings that every system causes them. One failure can reach more than one column. Trustworthy AI and responsible use can also reduce these risks and bring benefits.</figcaption>
+          </figure>
+          <div class="grid2">
+            <article class="card" style="--hue:var(--ctx)"><span class="tag" style="--hue:var(--gold-ink)">Context sets the stakes</span><h4>Same error, different consequence</h4><p>A wrong product label is an inconvenience; a wrong medicine label can endanger a patient. An error rate alone can't tell you whether the risk is acceptable.</p></article>
+            <article class="card" style="--hue:var(--data)"><span class="tag" style="--hue:var(--blue-ink)">Metrics have limits</span><h4>Missing evidence isn't proof of safety</h4><p>Some harms are hard to count, affect a small group or only appear after deployment. Metrics can oversimplify, miss context or be gamed. Say what you couldn't measure.</p></article>
+            <article class="card" style="--hue:var(--model)"><span class="tag" style="--hue:var(--teal-ink)">Risk crosses suppliers</span><h4>Check what others supplied</h4><p>A vendor may test general performance while the organisation using it has a different population and purpose. Review third-party data, software, hardware, updates, and who owns each control.</p></article>
+            <article class="card" style="--hue:var(--task)"><span class="tag" style="--hue:var(--task)">The lab isn't the workplace</span><h4>Recheck in real conditions</h4><p>People, workload, lighting, devices and local habits change results. Monitor where the system is actually used, and listen to the people who live with its effects.</p></article>
+          </div>
+          <p class="prose">NIST also warns that people often assume AI works, and works well, in every setting, and treat it as more objective than a human. Risk tolerance isn't decided by the model. An organisation sets priorities, but must respect the law, rights, sector rules and affected people. Keep leftover risk visible after controls: “we added a safeguard” doesn't make it disappear. If serious harm can't be controlled, the answer may be not to build or deploy at all.</p>
+
+          <h3 id="nist-audience">Who takes part, and when?</h3>
+          <div class="prose"><p>NIST, adapting an OECD framework, describes an AI system through four connected <strong>dimensions</strong>: the <strong>application context</strong> (where and why it's used), <strong>data and input</strong> (what it receives and where that came from), the <strong>AI model</strong> (how it processes information) and the <strong>task and output</strong> (what it recommends or does). Around them run the <strong>lifecycle stages</strong>. At the centre are <strong>People and Planet</strong>: human rights and the wellbeing of society and the environment.</p></div>
+          <figure class="plate" aria-labelledby="f19-cap">
+            <p class="plate-title">Lifecycle and key dimensions of an AI system</p>
+            <div class="f2">
+              <svg viewBox="0 0 520 520" role="img" aria-labelledby="sb-t sb-d"><title id="sb-t">Lifecycle and key dimensions of an AI system</title><desc id="sb-d">People and Planet at the centre. Inner ring: application context, data and input, AI model, task and output. Outer ring of lifecycle stages: plan and design, collect and process data, build and use model, verify and validate, deploy and use, operate and monitor.</desc><defs><path id="sbi0" d="M149.0 260.0A111.0 111.0 0 0 1 260.0 149.0"/><path id="sbi1" d="M260.0 149.0A111.0 111.0 0 0 1 371.0 260.0"/><path id="sbi2" d="M260.0 385.0A125.0 125.0 0 0 0 385.0 260.0"/><path id="sbi3" d="M135.0 260.0A125.0 125.0 0 0 0 260.0 385.0"/><path id="sbo0" d="M121.4 121.4A196.0 196.0 0 0 1 260.0 64.0"/><path id="sbo1" d="M260.0 64.0A196.0 196.0 0 0 1 456.0 260.0"/><path id="sbo2" d="M408.5 408.5A210.0 210.0 0 0 0 470.0 260.0"/><path id="sbo3" d="M260.0 470.0A210.0 210.0 0 0 0 408.5 408.5"/><path id="sbo4" d="M50.0 260.0A210.0 210.0 0 0 0 260.0 470.0"/><path id="sbo5" d="M64.0 260.0A196.0 196.0 0 0 1 121.4 121.4"/></defs><path d="M102.0 260.0A158 158 0 0 1 260.0 102.0L260.0 182.0A78 78 0 0 0 182.0 260.0Z" fill="#e2a12b" stroke="#fffdf7" stroke-width="4"/><text class="sb-in" fill="#1b2838"><textPath href="#sbi0" startOffset="50%" text-anchor="middle">Application context</textPath></text><path d="M260.0 102.0A158 158 0 0 1 418.0 260.0L338.0 260.0A78 78 0 0 0 260.0 182.0Z" fill="#1a9fdc" stroke="#fffdf7" stroke-width="4"/><text class="sb-in" fill="#fff"><textPath href="#sbi1" startOffset="50%" text-anchor="middle">Data and input</textPath></text><path d="M418.0 260.0A158 158 0 0 1 260.0 418.0L260.0 338.0A78 78 0 0 0 338.0 260.0Z" fill="#2fb48f" stroke="#fffdf7" stroke-width="4"/><text class="sb-in" fill="#fff"><textPath href="#sbi2" startOffset="50%" text-anchor="middle">AI model</textPath></text><path d="M260.0 418.0A158 158 0 0 1 102.0 260.0L182.0 260.0A78 78 0 0 0 260.0 338.0Z" fill="#3d5a7c" stroke="#fffdf7" stroke-width="4"/><text class="sb-in" fill="#fff"><textPath href="#sbi3" startOffset="50%" text-anchor="middle">Task and output</textPath></text><path d="M84.6 84.6A248 248 0 0 1 260.0 12.0L260.0 102.0A158 158 0 0 0 148.3 148.3Z" fill="#f2cb80" stroke="#fffdf7" stroke-width="4"/><text class="sb-out"><textPath href="#sbo0" startOffset="50%" text-anchor="middle">Plan and design</textPath></text><path d="M260.0 12.0A248 248 0 0 1 508.0 260.0L418.0 260.0A158 158 0 0 0 260.0 102.0Z" fill="#8cc6e8" stroke="#fffdf7" stroke-width="4"/><text class="sb-out"><textPath href="#sbo1" startOffset="50%" text-anchor="middle">Collect and process data</textPath></text><path d="M508.0 260.0A248 248 0 0 1 435.4 435.4L371.7 371.7A158 158 0 0 0 418.0 260.0Z" fill="#98d7bf" stroke="#fffdf7" stroke-width="4"/><text class="sb-out"><textPath href="#sbo2" startOffset="50%" text-anchor="middle">Build and use model</textPath></text><path d="M435.4 435.4A248 248 0 0 1 260.0 508.0L260.0 418.0A158 158 0 0 0 371.7 371.7Z" fill="#b5e3d1" stroke="#fffdf7" stroke-width="4"/><text class="sb-out"><textPath href="#sbo3" startOffset="50%" text-anchor="middle">Verify and validate</textPath></text><path d="M260.0 508.0A248 248 0 0 1 12.0 260.0L102.0 260.0A158 158 0 0 0 260.0 418.0Z" fill="#8fa3bd" stroke="#fffdf7" stroke-width="4"/><text class="sb-out"><textPath href="#sbo4" startOffset="50%" text-anchor="middle">Deploy and use</textPath></text><path d="M12.0 260.0A248 248 0 0 1 84.6 84.6L148.3 148.3A158 158 0 0 0 102.0 260.0Z" fill="#f6dba6" stroke="#fffdf7" stroke-width="4"/><text class="sb-out"><textPath href="#sbo5" startOffset="50%" text-anchor="middle">Operate and monitor</textPath></text><circle cx="260" cy="260" r="76" fill="#8b8886" stroke="#fffdf7" stroke-width="4"/><text x="260" y="254" class="sb-core">People</text><text x="260" y="280" class="sb-core">and Planet</text></svg>
+              <ul class="f2-key">
+                <li style="--hue:var(--ctx);--tint:var(--pale-gold)"><b>Application context</b>Plan and design · Operate and monitor</li>
+                <li style="--hue:var(--data);--tint:var(--pale-blue)"><b>Data and input</b>Collect and process data</li>
+                <li style="--hue:var(--model);--tint:var(--pale-teal)"><b>AI model</b>Build and use model · Verify and validate</li>
+                <li style="--hue:var(--task);--tint:var(--pale-navy)"><b>Task and output</b>Deploy and use</li>
+                <li style="--hue:var(--planet);--tint:var(--pale-grey)"><b>People and Planet</b>Rights and wellbeing at the centre of every stage</li>
+              </ul>
+            </div>
+            <figcaption class="figcap" id="f19-cap"><b>Fig. 19:</b> Redrawn from NIST AI RMF 1.0, Figure 2 (itself modified from OECD 2022). Inner rings: key dimensions. Outer ring: lifecycle stages. Risk work ideally starts at Plan and Design and continues throughout.</figcaption>
+          </figure>
+
+          <p class="prose">NIST's Figure 3 spreads that wheel into columns and names who does what at each stage. TEVV, short for test, evaluation, verification and validation, runs through every column. The bottom row is not from NIST: it follows the hiring ranker through the same stages.</p>
+          <figure class="plate" aria-labelledby="f20-cap">
+            <p class="plate-title">AI actors across the lifecycle, with the hiring ranker</p>
+            <div class="matrix m7" style="grid-template-columns:repeat(7,minmax(0,1fr))">
+              <div class="mcol dark" style="--hue:var(--ctx);--tint:var(--pale-gold)"><div class="mhead">Plan and design<small>Application context</small></div><div class="mcell"><span class="rowlab">TEVV</span>Audit and impact assessment</div><div class="mcell"><span class="rowlab">Activities</span>Set out the system's concept, objectives and assumptions against legal, regulatory and ethical requirements.</div><div class="mcell"><span class="rowlab">Typical actors</span>Operators, end users, domain experts, designers, impact assessors, product managers, compliance and governance experts, executives, affected communities.</div><div class="mcell hire"><span class="rowlab">Hiring ranker</span>Define the job-related purpose, criteria and excluded uses; compare a non-AI process.</div></div>
+              <div class="mcol" style="--hue:var(--data);--tint:var(--pale-blue)"><div class="mhead">Collect and process data<small>Data and input</small></div><div class="mcell"><span class="rowlab">TEVV</span>Internal and external validation</div><div class="mcell"><span class="rowlab">Activities</span>Gather, validate and clean data; document the dataset's metadata and characteristics.</div><div class="mcell"><span class="rowlab">Typical actors</span>Data scientists and engineers, data providers, domain experts, socio-cultural analysts, human-factors and TEVV experts.</div><div class="mcell hire"><span class="rowlab">Hiring ranker</span>Trace past hiring records: source, permissions, who's missing, whether labels reflect old managers' preferences.</div></div>
+              <div class="mcol" style="--hue:var(--model);--tint:var(--pale-teal)"><div class="mhead">Build and use model<small>AI model</small></div><div class="mcell"><span class="rowlab">TEVV</span>Model testing</div><div class="mcell"><span class="rowlab">Activities</span>Create or select algorithms; train models.</div><div class="mcell"><span class="rowlab">Typical actors</span>Modellers, model engineers, data scientists, developers, domain experts, advised by socio-cultural analysts.</div><div class="mcell hire"><span class="rowlab">Hiring ranker</span>Choose features; drop any without a job-related reason.</div></div>
+              <div class="mcol" style="--hue:var(--model);--tint:var(--pale-teal)"><div class="mhead">Verify and validate<small>AI model</small></div><div class="mcell"><span class="rowlab">TEVV</span>Model testing</div><div class="mcell"><span class="rowlab">Activities</span>Verify, validate and calibrate; interpret model output.</div><div class="mcell"><span class="rowlab">Typical actors</span>Kept separate from the builders as good practice.</div><div class="mcell hire"><span class="rowlab">Hiring ranker</span>An independent tester checks false rejections across job types and groups.</div></div>
+              <div class="mcol" style="--hue:var(--task);--tint:var(--pale-navy)"><div class="mhead">Deploy and use<small>Task and output</small></div><div class="mcell"><span class="rowlab">TEVV</span>Integration, compliance testing, validation</div><div class="mcell"><span class="rowlab">Activities</span>Pilot; check compatibility with existing systems and regulatory compliance; manage organisational change; evaluate user experience.</div><div class="mcell"><span class="rowlab">Typical actors</span>System integrators, software engineers, procurement experts, third-party suppliers, executives, advised by human-factors and governance experts.</div><div class="mcell hire"><span class="rowlab">Hiring ranker</span>Pilot on one role; train recruiters; tell applicants AI is used and how to challenge.</div></div>
+              <div class="mcol dark" style="--hue:var(--ctx);--tint:var(--pale-gold)"><div class="mhead">Operate and monitor<small>Application context</small></div><div class="mcell"><span class="rowlab">TEVV</span>Audit and impact assessment</div><div class="mcell"><span class="rowlab">Activities</span>Run the system and keep assessing its recommendations and intended and unintended impacts.</div><div class="mcell"><span class="rowlab">Typical actors</span>Operators, practitioners, impact assessors, auditors, compliance and governance experts, affected communities.</div><div class="mcell hire"><span class="rowlab">Hiring ranker</span>Watch complaints, overrides and error rates; pause when agreed limits are breached.</div></div>
+              <div class="mcol" style="--hue:var(--planet);--tint:var(--pale-grey)"><div class="mhead">Use or impacted by<small>People and Planet</small></div><div class="mcell"><span class="rowlab">TEVV</span>Audit and impact assessment</div><div class="mcell"><span class="rowlab">Activities</span>Use the system; monitor and assess impacts; seek mitigation; advocate for rights.</div><div class="mcell"><span class="rowlab">Typical actors</span>End users, affected individuals and communities, the public, policy makers, standards bodies, advocacy and environmental groups, researchers.</div><div class="mcell hire"><span class="rowlab">Hiring ranker</span>Applicants, advocates and recruiters report effects and push for fixes.</div></div>
+            </div>
+            <figcaption class="figcap" id="f20-cap"><b>Fig. 20:</b> Adapted and condensed from NIST AI RMF 1.0, Figure 3. Actor lists are shortened; see NIST Appendix A for full task descriptions. The hiring row is an invented example added for this guide.</figcaption>
+          </figure>
+          <div class="prose"><p>The people involved go well beyond whoever writes the code. NIST treats the People and Planet group (affected communities, advocates, researchers, standards bodies, environmental groups) as a separate audience that <em>informs</em> the builders: they supply context, point out actual impacts, help set boundaries on what the system may do, and push the trade-off discussion into the open.</p><p>For the hiring ranker, roles differ: an applicant can describe what a wrong ranking does to them; a recruiter can explain the workflow; a data scientist can test error patterns; a manager has to fund changes and own the go/no-go decision. Feedback matters only if it can change the design or the decision.</p></div>
+
+          <h3 id="nist-trust">What does NIST mean by trustworthy AI?</h3>
+          <p class="prose">NIST names seven characteristics to examine together. They're not boxes to tick once: a system can do well on one and fail badly on another. NIST says trustworthiness is only as strong as its weakest characteristic. Their layout carries meaning.</p>
+          <figure class="plate" aria-labelledby="f21-cap">
+            <p class="plate-title">Characteristics of trustworthy AI systems</p>
+            <div class="f4">
+              <div class="pillar" style="--hue:var(--model)"><b>Safe</b><small>Doesn't endanger life, health, property or environment</small></div>
+              <div class="pillar" style="--hue:var(--data)"><b>Secure and resilient</b><small>Resists attack; recovers and degrades safely</small></div>
+              <div class="pillar" style="--hue:#b5651d"><b>Explainable and interpretable</b><small>How it works; what an output means</small></div>
+              <div class="pillar" style="--hue:var(--task)"><b>Privacy-enhanced</b><small>Limits intrusion and re-identification</small></div>
+              <div class="pillar" style="--hue:var(--manage)"><b>Fair, with harmful bias managed</b><small>Equality and equity, not only balance</small></div>
+              <div class="side"><b>Accountable and transparent</b></div>
+              <div class="base"><b>Valid and reliable</b><small>Does the intended job, in realistic conditions, over time. The foundation for everything above.</small></div>
+            </div>
+            <figcaption class="figcap" id="f21-cap"><b>Fig. 21:</b> Redrawn from NIST AI RMF 1.0, Figure 4. Valid and reliable is a necessary condition, so it is the base. Accountable and transparent runs the full height because it relates to all the others.</figcaption>
+          </figure>
+          <div class="traits">
+            <article style="--hue:var(--navy)"><b>Valid and reliable</b><p>Does it do the intended job, with evidence from realistic conditions, over time? Accuracy should be reported with realistic test sets and broken down by data segment. A score from another population or setting may not transfer.</p></article>
+            <article style="--hue:var(--model)"><b>Safe</b><p>Could it endanger people, property or the environment? Risks of serious injury or death get the most urgent attention. Does it fail safely, and can people shut it down or intervene?</p></article>
+            <article style="--hue:var(--data)"><b>Secure and resilient</b><p>Can it resist attacks such as data poisoning or model theft, recover from disruption, and cope safely with unexpected change or misuse?</p></article>
+            <article style="--hue:var(--gold)"><b>Accountable and transparent</b><p>Are roles, decisions, data origins, limits and incidents recorded and given to the people who need them? A transparent system isn't automatically accurate or fair, but an opaque one is hard to check.</p></article>
+            <article style="--hue:#b5651d"><b>Explainable and interpretable</b><p>Can operators understand how it works, and can a person make sense of what a particular output means for them? Related but different questions; see below.</p></article>
+            <article style="--hue:var(--task)"><b>Privacy-enhanced</b><p>Does the design limit intrusion and unnecessary data use, protect confidentiality, and reduce the risk of identifying people from combined or inferred data?</p></article>
+            <article style="--hue:var(--manage)"><b>Fair, with harmful bias managed</b><p>Who is more likely to be missed, wrongly flagged or excluded? NIST names three kinds of bias: systemic, computational and statistical, and human-cognitive. Balanced predictions across groups can still leave the system inaccessible to disabled people.</p></article>
+          </div>
+          <p class="prose">NIST separates three ideas that people often blur together:</p>
+          <div class="wwh">
+            <div><b>What?</b><span>Transparency</span><p>What happened in the system, and what information about it is available.</p></div>
+            <div><b>How?</b><span>Explainability</span><p>How the decision was produced: the mechanism.</p></div>
+            <div><b>Why?</b><span>Interpretability</span><p>Why this output, and what it means in context for the person using it.</p></div>
+          </div>
+          <p class="note"><strong>Trade-offs need reasons:</strong> stronger privacy measures can reduce the data available and cost accuracy; a more accurate model may be harder to interpret; security can make a system less convenient. Measurement can show that a trade-off exists, but not which value should win. The people responsible have to make that call openly and justify it.</p>
+
+          <h3 id="nist-core">The AI RMF Core: what the four functions ask teams to do</h3>
+          <p class="prose">NIST's Core tables list detailed categories and outcomes for each function. The summary below turns the main work into questions a student can use. NIST says these actions aren't a mandatory checklist and needn't follow a fixed order; the process repeats as the system and its setting change.</p>
+          <nav class="fn-jump" aria-label="Jump to a NIST AI RMF function"><a href="#nist-govern">Govern</a><a href="#nist-map">Map</a><a href="#nist-measure">Measure</a><a href="#nist-manage">Manage</a></nav>
+          <div class="fns">
+            <article class="fn" id="nist-govern" style="--hue:var(--govern);--tint:var(--pale-blue)"><header><span class="badge"><svg aria-hidden="true"><use href="#i-govern"/></svg></span><h4>Govern<small>Rules, roles and culture</small></h4></header><ul><li>Know and record the legal and organisational requirements.</li><li>Set policies, approval routes, review dates, a system inventory and clear owners.</li><li>Give staff the training, time, independence and authority to do the work.</li><li>Bring different disciplines and affected voices into decisions; record feedback and disagreement.</li><li>Manage suppliers and third-party data; plan how to update, switch off or retire a system safely.</li></ul><p class="hire"><b>Hiring ranker</b>Name who approves it, checks it, handles applicant challenges and can pause it.</p></article>
+            <article class="fn" id="nist-map" style="--hue:var(--map);--tint:var(--pale-teal)"><header><span class="badge"><svg aria-hidden="true"><use href="#i-map"/></svg></span><h4>Map<small>The real use and its effects</small></h4></header><ul><li>State the purpose, users, setting, intended benefits, boundaries and prohibited uses.</li><li>Describe the data, method, output, human oversight and known limits.</li><li>Check the data suits the task and the target label measures what's claimed.</li><li>Map affected people and the likelihood and seriousness of benefits and harms, including misuse.</li><li>Include suppliers, laws, norms and non-AI alternatives; make an initial go/no-go call.</li></ul><p class="hire"><b>Hiring ranker</b>Do past hiring records measure job ability, or repeat earlier managers' preferences?</p></article>
+            <article class="fn" id="nist-measure" style="--hue:#b07a10;--tint:var(--pale-gold)"><header><span class="badge"><svg aria-hidden="true"><use href="#i-measure"/></svg></span><h4>Measure<small>Test the claims, keep testing</small></h4></header><ul><li>Choose measures for important risks; say what can't yet be measured.</li><li>Use realistic test data and conditions; report uncertainty, errors and limits, not one accuracy score.</li><li>Check reliability, safety, security, privacy, fairness, explanations and human-AI interaction.</li><li>Where practical, use reviewers who didn't build it; consult domain experts and affected people.</li><li>Monitor real use, appeals and new risks; check whether the controls themselves work.</li></ul><p class="hire"><b>Hiring ranker</b>Compare false rejections across groups and job types with what applicants report.</p></article>
+            <article class="fn" id="nist-manage" style="--hue:var(--manage);--tint:var(--pale-navy)"><header><span class="badge"><svg aria-hidden="true"><use href="#i-manage"/></svg></span><h4>Manage<small>Decide and act on each risk</small></h4></header><ul><li>Prioritise by impact and likelihood; mitigate, avoid, transfer or accept each risk.</li><li>Document the risk that remains and decide whether use should go ahead.</li><li>Compare with a workable non-AI option; fund the controls that reduce harm.</li><li>Monitor suppliers and operation; provide ways to appeal, override and report problems.</li><li>Plan incident response, recovery, communication, changes, safe shutdown and retirement.</li></ul><p class="hire"><b>Hiring ranker</b>Pause if group error rates or complaints pass agreed limits, until the cause is fixed.</p></article>
+          </div>
+
+          <h3>How would we know the framework is helping?</h3>
+          <p class="prose">NIST doesn't claim that using the framework proves a system trustworthy. It asks organisations to check whether their risk work has improved. The benefits it expects:</p>
+          <ol class="benefits">
+            <li>Clearer processes for governing, mapping, measuring and managing risk, with outcomes recorded.</li>
+            <li>Better understanding of how trustworthiness characteristics relate and where they conflict.</li>
+            <li>Explicit, documented decisions on whether to commission or deploy a system.</li>
+            <li>Stronger policies and procedures that make people accountable for AI risks.</li>
+            <li>An organisational culture that looks for risks and impacts on people and communities.</li>
+            <li>Better sharing of risks, decisions, responsibilities, common mistakes, testing practice and lessons.</li>
+            <li>More understanding of the setting and risks that may appear further downstream.</li>
+            <li>Stronger involvement of people and groups who know the system or are affected by it.</li>
+            <li>Better capacity to test, evaluate, verify and validate AI systems and their risks.</li>
+          </ol>
+          <p class="prose">These are improvements in an organisation's process, not proof about a particular system. Check whether they actually happened and whether outcomes improved.</p>
+
+          <figure class="plate" aria-labelledby="f22-cap">
+            <p class="plate-title">One risk carried through the four functions</p>
+            <p class="prose" style="margin:0 auto 1rem;text-align:center"><strong>Could the hiring ranker miss qualified applicants?</strong></p>
+            <div class="panels c4 linked thru">
+              <article class="panel"><header style="background:var(--govern)"><h4>Govern</h4></header><div class="body"><p>Assign an owner, approval limits and a challenge route for applicants.</p></div></article>
+              <article class="panel"><header style="background:var(--map)"><h4>Map</h4></header><div class="body"><p>Trace which fields and historic labels shape the ranking; identify applicants who may be disadvantaged.</p></div></article>
+              <article class="panel"><header style="background:#b07a10"><h4>Measure</h4></header><div class="body"><p>Use relevant test cases; compare false rejections across job types and groups; involve independent reviewers; gather applicant feedback.</p></div></article>
+              <article class="panel"><header style="background:var(--manage)"><h4>Manage</h4></header><div class="body"><p>Remove unsupported fields; require meaningful review; record the remaining risk; pause if limits are breached.</p></div></article>
+            </div>
+            <figcaption class="figcap" id="f22-cap"><b>Fig. 22:</b> Invented example. A risk-management cycle, not a guarantee that hiring is fair.</figcaption>
+          </figure>
+          <div class="src"><strong>NIST sources, after the explanation:</strong> Figs 17–21 are teaching redraws adapted from Figures 5, 1, 2, 3 and 4 of <a href="https://nvlpubs.nist.gov/nistpubs/ai/nist.ai.100-1.pdf" target="_blank" rel="noopener noreferrer">NIST AI RMF 1.0 (NIST AI 100-1)</a>, not official NIST images. The AIRC pages explain <a href="https://airc.nist.gov/airmf-resources/airmf/1-sec-risk/" target="_blank" rel="noopener noreferrer">framing risk</a>, <a href="https://airc.nist.gov/airmf-resources/airmf/2-sec-audience/" target="_blank" rel="noopener noreferrer">audience and AI actors</a>, <a href="https://airc.nist.gov/airmf-resources/airmf/3-sec-characteristics/" target="_blank" rel="noopener noreferrer">trustworthiness</a>, <a href="https://airc.nist.gov/airmf-resources/airmf/4-effectiveness/" target="_blank" rel="noopener noreferrer">effectiveness</a> and <a href="https://airc.nist.gov/airmf-resources/airmf/5-sec-core/" target="_blank" rel="noopener noreferrer">the Core</a>. The <a href="https://www.nist.gov/itl/ai-risk-management-framework/nist-ai-rmf-playbook" target="_blank" rel="noopener noreferrer">AI RMF Playbook</a> gives suggested actions. NIST states AI RMF 1.0 is being revised; it is voluntary guidance. The LMS committee and lifecycle activities are in <a href="lms-accordion-capture.md">the captured explanation panels</a>.</div>
+
+          <h3 id="oecd-gov">OECD recommendations for governments: the conditions around a project</h3>
+          <p class="prose">Alongside its five principles, the OECD recommends five kinds of action for governments. These are policy recommendations, not legal duties for a student or developer. They still show what a trustworthy project depends on: evidence, fair access, workable rules, skilled people and cooperation. Read each column top to bottom: what governments are asked to build, then what you can check in your own project.</p>
+          <figure class="plate" aria-labelledby="f23-cap">
+            <p class="plate-title">Two levels: government conditions and project checks</p>
+            <p class="tier-key"><span class="k-gov">Top: what governments are asked to build</span><span class="k-you">Bottom: what you can check in a project</span></p>
+            <div class="tiers">
+              <div class="pair"><div class="gov"><b>1 · Invest in AI R&amp;D</b>Public and private research, including social, legal and ethical effects; open datasets that are representative and respect privacy.</div><div class="you"><span class="sr">What you can check: </span>Document a dataset's source, coverage, permissions and gaps. Open doesn't mean suitable, representative or lawful for every purpose.</div></div>
+              <div class="pair"><div class="gov"><b>2 · Inclusive ecosystem</b>Access to data, tools, computing and connectivity; safe, fair ways to share knowledge and data, such as data trusts.</div><div class="you"><span class="sr">What you can check: </span>Who can access the tools? Who's missing from the data? What supplier or infrastructure do you depend on? What controls does sharing need?</div></div>
+              <div class="pair"><div class="gov"><b>3 · Enabling, interoperable policy</b>Controlled experiments before wide rollout; outcome-based rules; cooperation across jurisdictions; regular review.</div><div class="you"><span class="sr">What you can check: </span>Identify the setting and rules first. A pilot needs limits, an owner, harm measures and a decision point before any wider rollout.</div></div>
+              <div class="pair"><div class="gov"><b>4 · Human capacity and labour change</b>Skills, social dialogue, support for displaced workers, safer work, good job quality, fairly shared benefits.</div><div class="you"><span class="sr">What you can check: </span>Include workers and users. Which tasks change? Who needs training? Does monitoring or pace get worse? How do people raise concerns?</div></div>
+              <div class="pair"><div class="gov"><b>5 · International cooperation</b>Shared knowledge, consensus-based technical standards and comparable indicators.</div><div class="you"><span class="sr">What you can check: </span>Does the data or result travel to another language, population or legal setting? Record what doesn't transfer; check cross-border data handling.</div></div>
+            </div>
+            <figcaption class="figcap" id="f23-cap"><b>Fig. 23:</b> OECD/LEGAL/0449, amended 3 May 2024, summarised. A student can spot an ecosystem gap or a training need; they can't close a public-policy gap by ticking a box.</figcaption>
+          </figure>
+          <div class="src"><strong>OECD source, after the explanation:</strong> the five government recommendations are summarised from the <a href="https://legalinstruments.oecd.org/en/instruments/OECD-LEGAL-0449" target="_blank" rel="noopener noreferrer">OECD Recommendation of the Council on Artificial Intelligence</a>, amended 3 May 2024, and the <a href="https://www.oecd.org/en/topics/ai-principles.html" target="_blank" rel="noopener noreferrer">OECD AI Principles overview</a>.</div>
+        </section>
+
+        <section class="sec" id="course-route">
+          <div class="sec-head"><span class="sec-num" aria-hidden="true">09</span><div><p class="eyebrow">The LMS stays the spine of this companion</p><h2>Principles move into increasingly demanding situations.</h2></div></div>
+          <p class="lead">The first two LMS sections introduce ethics and roboethics through videos. The activities then ask you to judge dilemmas, weigh effects on workers and patients, compare military control arrangements, and plan governance and risk management. This guide expands those questions; it doesn't replace the lesson or its assessment.</p>
+          <figure class="plate" aria-labelledby="f24-cap">
+            <p class="plate-title">LMS route and where each stop is explained here</p>
+            <ol class="metro">
+              <li style="--hue:var(--ctx)"><a href="raw-transcript.md"><b>01 · Introduction to Ethics</b><span>Morals, ethics, law, Asimov, responsibility · video transcript</span></a><em>Guide 01</em></li>
+              <li style="--hue:var(--ctx)"><a href="raw-transcript.md"><b>02 · Roboethics</b><span>Eight principles for designers, producers and users · video transcript</span></a><em>Guide 02</em></li>
+              <li style="--hue:var(--data)"><a href="#dilemmas"><b>03 · Moral dilemmas of AI</b><span>Conflicting harms; limits of preference surveys</span></a><em>Guide 03</em></li>
+              <li style="--hue:var(--data)"><a href="#automation"><b>04 · Ethics of Automation</b><span>Work, safety, job quality, who gains</span></a><em>Guide 04</em></li>
+              <li style="--hue:var(--data)"><a href="#healthcare"><b>05 · Ethics of Healthcare Robotics</b><span>Patient choice, dignity, safety, privacy, human care</span></a><em>Guide 05</em></li>
+              <li style="--hue:var(--model)"><a href="#military"><b>06 · Ethics of Military Robotics</b><span>Unarmed support; human in, on or over the loop</span></a><em>Guide 07</em></li>
+              <li style="--hue:var(--model)"><a href="#governance"><b>07 · AI Ethics Governance</b><span>Oversight for consequential hiring decisions</span></a><em>Guide 08</em></li>
+              <li style="--hue:var(--manage)"><a href="#data-decisions"><b>08 · Ethical Risk Management</b><span>Loan decisions, discrimination, privacy</span></a><em>Guide 06 + 08</em></li>
+              <li style="--hue:var(--manage)"><a href="#governance"><b>09 · Ethical Risk Management Practices</b><span>Roles, team culture, lifecycle routines</span></a><em>Guide 08</em></li>
+              <li style="--hue:var(--manage)"><a href="#check"><b>10 · Case Studies and Practical Applications</b><span>Transfer the review questions between sectors</span></a><em>Guide 10</em></li>
+            </ol>
+            <figcaption class="figcap" id="f24-cap"><b>Fig. 24:</b> LMS order on the left, guide section on the right. Military robotics comes before data decisions in the LMS but after it here, so the legal terms are explained before they're needed in governance.</figcaption>
+          </figure>
+          <p class="prose">The lesson has two videos; their transcripts are kept apart from the written page text and animation descriptions. Full records: <a href="raw-transcript.md">raw transcripts</a>, <a href="lms-section-capture.md">visible text from all ten sections</a>, <a href="lms-accordion-capture.md">stored challenge, explanation, test, solution and review text</a>, and <a href="lms-link-exploration.md">the five external lesson links, opened and explored</a>. Image-only animation content isn't reproduced.</p>
+        </section>
+
+        <section class="sec" id="check">
+          <div class="sec-head"><span class="sec-num" aria-hidden="true">10</span><div><p class="eyebrow">LMS section 10 · try before opening the answer</p><h2>Use the questions on a new system.</h2></div></div>
+          <p class="lead">A supermarket proposes a camera system that estimates which shoppers may need help at self-checkout. It might cut waiting and help staff respond sooner. It might also misread a customer, collect unnecessary images, affect groups differently or make shoppers feel watched. Work through the four prompts, then open the sample analysis.</p>
+          <ol class="strip" style="grid-template-columns:repeat(4,minmax(0,1fr));margin:1.4rem 0">
+            <li style="--hue:var(--ctx);--tint:var(--pale-gold)"><b>Name the decision</b><span>What does the system actually decide or recommend? What happens to a person because of it?</span></li>
+            <li style="--hue:var(--blue-ink);--tint:var(--pale-blue)"><b>Find people and missing viewpoints</b><span>Who benefits, who is watched, who could be misread, who should test the process?</span></li>
+            <li style="--hue:var(--teal-ink);--tint:var(--pale-teal)"><b>Separate the issues</b><span>Which concern is personal data, which is safety, which is unequal treatment, which is trust or dignity?</span></li>
+            <li style="--hue:var(--manage);--tint:var(--pale-navy)"><b>Design a real safeguard</b><span>What information, human authority, correction route, fallback and monitoring? What evidence would still make you reject it?</span></li>
+          </ol>
+          <details><summary>Open a sample analysis after your attempt</summary><div><p><strong>Purpose and decision:</strong> a discreet staff alert is different from a system that follows a shopper or labels them suspicious. The uses have different effects and data needs.</p><p><strong>People and risks:</strong> shoppers, staff and the retailer are affected. Camera images may be personal data; differences in face, disability, clothing or movement could produce uneven errors. A false alert could embarrass someone or trigger an unjustified confrontation. The risk has to be tested, not assumed.</p><p><strong>Controls:</strong> first ask whether a less intrusive approach meets the need. If cameras stay, define a narrow purpose, minimise and secure data, keep retention short, test with varied users, have staff treat an alert as a prompt rather than proof, give them a safe de-escalation procedure, and provide a way to raise or correct a concern. Monitor false alerts and complaints. Pause if it causes harm the team can't address.</p><p>Illustrative analysis, not a legal classification of a real product. The actual data, purpose, system and jurisdiction would need review.</p></div></details>
+          <details><summary>Diagnose: “The model is 95% accurate, so the hiring process is fair.” What's missing?</summary><div><p>One accuracy figure hides which errors occurred, for whom, and with what consequences. It says nothing about whether the target label is a good definition of job performance, whether the data is relevant, whether applicants can challenge errors, or whether a human meaningfully reviews the result. Ask for error types and impacts across relevant groups, the use context and the correction process.</p></div></details>
+          <details><summary>Transfer: how does the same review change for a hospital delivery robot?</summary><div><p><strong>Same questions, different risks.</strong> Focus on collisions, blocked exits, wrong or late deliveries, infection control, privacy of labels and conversations, patient choice, accessibility, human contact and a tested manual fallback. The hiring system's fairness metrics don't answer these care questions.</p></div></details>
+
+          <h3>Student pre-project checklist: before you collect data</h3>
+          <p class="prose">Use this before downloading, scraping, requesting or creating a dataset. Tick an item only when you can answer it with a reason or a source. “I don't know yet” is useful: it tells you what to find out first. Ticks aren't saved.</p>
+          <div class="checklist-wrap">
+            <div class="progress" aria-live="polite"><span id="ck-count">0 of 20 answered</span><span class="track" aria-hidden="true"><span class="fill" id="ck-fill"></span></span></div>
+            <form class="checklist" aria-label="Data project planning checklist">
+              <fieldset style="--hue:var(--ctx)"><legend>Need and purpose <span>5</span></legend>
+                <label><input type="checkbox"><span>Can I state the problem and the decision or question in one or two clear sentences?</span></label>
+                <label><input type="checkbox"><span>Do I know who asked for the project, who will use the result and who may be affected?</span></label>
+                <label><input type="checkbox"><span>Have I checked whether existing data, a smaller sample, a survey or a non-data solution could answer the question?</span></label>
+                <label><input type="checkbox"><span>Can I explain why each field I want to collect is needed for this purpose?</span></label>
+                <label><input type="checkbox"><span>Have I considered environmental costs, access barriers, or changes to people's work and wellbeing?</span></label>
+              </fieldset>
+              <fieldset style="--hue:var(--data)"><legend>People and data <span>7</span></legend>
+                <label><input type="checkbox"><span>Do I know who the data describes, including people who aren't customers or direct users?</span></label>
+                <label><input type="checkbox"><span>Can I trace where the data came from, when and how it was collected, and what the provider permits?</span></label>
+                <label><input type="checkbox"><span>Have I checked for personal, sensitive, confidential, copyrighted or otherwise restricted material?</span></label>
+                <label><input type="checkbox"><span>Could people be identified by combining fields, even with names removed?</span></label>
+                <label><input type="checkbox"><span>Does the data cover the people, places and period I want to discuss? Who or what is missing?</span></label>
+                <label><input type="checkbox"><span>Are the labels and measurements accurate, consistent and meaningful for my question?</span></label>
+                <label><input type="checkbox"><span>Have I asked people represented in or affected by the data what the records miss or get wrong?</span></label>
+              </fieldset>
+              <fieldset style="--hue:var(--manage)"><legend>Risks, safeguards and decisions <span>8</span></legend>
+                <label><input type="checkbox"><span>What could go wrong if the data is wrong, incomplete, exposed or used outside its original purpose?</span></label>
+                <label><input type="checkbox"><span>Could the data or a proxy lead to unfair treatment, even if sensitive traits are absent?</span></label>
+                <label><input type="checkbox"><span>Who might benefit, who might bear the cost, and how serious could a mistake be?</span></label>
+                <label><input type="checkbox"><span>Have I set access, security and retention arrangements that fit the data and project?</span></label>
+                <label><input type="checkbox"><span>If the result affects a person, can they understand, question or correct it, and reach a responsible human?</span></label>
+                <label><input type="checkbox"><span>Have I named who owns the result, monitors harm and can pause or stop the project?</span></label>
+                <label><input type="checkbox"><span>If I apply the result to another population or country, have I checked it still fits and which rules apply?</span></label>
+                <label><input type="checkbox"><span>Have I recorded limitations, uncertainties, safeguards, owners and a clear reason to stop or change the project?</span></label>
+              </fieldset>
+              <p class="stop"><strong>Stop and ask before proceeding</strong> if the purpose is unclear, data rights or permissions are unknown, people could be harmed with no safeguard available, or you can't explain the result's limits. Ask your tutor or project owner what approval is needed. For real work, check the legal, institutional and data-protection requirements that apply.</p>
+            </form>
+          </div>
+        </section>
+
+        <section class="sec" id="sources">
+          <div class="sec-head"><span class="sec-num" aria-hidden="true">11</span><div><p class="eyebrow">Source material, independent enrichment and invented examples</p><h2>Keep the three kinds of material visible.</h2></div></div>
+          <div class="kinds">
+            <article class="card" style="--hue:var(--ctx)"><span class="tag" style="--hue:var(--gold-ink)">LMS-derived capture</span><h4>What the course says</h4><p>Transcripts and page captures, kept separately. Use them to check lesson wording, activities and assessment prompts. The LMS's legal statements are time-stamped source material, not current law.</p></article>
+            <article class="card" style="--hue:var(--govern)"><span class="tag" style="--hue:var(--blue-ink)">Independent enrichment</span><h4>What this guide adds</h4><p>Definitions, comparisons, current legal context, NIST and OECD extraction and the risk process. Claims are explained before linking to primary sources. Not official Code Institute material or legal advice.</p></article>
+            <article class="card" style="--hue:var(--planet)"><span class="tag" style="--hue:#5f5c5a">Invented examples</span><h4>What is made up</h4><p>The hiring ranker, loan refusal, factory, hospital robot, target alert and supermarket camera are fictional. They teach which questions to ask; they're not evidence about any real organisation or product.</p></article>
+          </div>
+          <div class="src-grid">
+            <a href="raw-transcript.md" style="--hue:var(--ctx)"><small>LMS</small>Two LMS video transcripts</a>
+            <a href="lms-section-capture.md" style="--hue:var(--ctx)"><small>LMS</small>Visible text from ten lesson sections</a>
+            <a href="lms-accordion-capture.md" style="--hue:var(--ctx)"><small>LMS</small>Closed-panel explanations and solutions</a>
+            <a href="lms-link-exploration.md" style="--hue:var(--ctx)"><small>LMS links</small>Five external lesson links, opened and explored</a>
+            <a href="analysis-and-enrichment.md"><small>Guide records</small>Scope, worked-example and teaching records</a>
+            <a href="primary-research.md"><small>Guide records</small>Independent research log and dated checks</a>
+          </div>
+          <h3>Current legal sources behind section 06</h3>
+          <p class="prose">The UK discussion rests on the enacted and commenced changes to UK GDPR made by the Data (Use and Access) Act 2025, plus current government and ICO summaries. The ICO practical page on human review is marked under review following the Act: its design advice is helpful but isn't a final post-Act rule. The EU AI Act is a separate law with its own risk categories and phased dates.</p>
+          <div class="src-grid">
+            <a href="https://www.legislation.gov.uk/ukpga/2025/18/section/80" target="_blank" rel="noopener noreferrer" style="--hue:var(--manage)"><small>UK · legislation</small>Data (Use and Access) Act 2025, section 80</a>
+            <a href="https://www.gov.uk/guidance/data-use-and-access-act-2025-data-protection-and-privacy-changes" target="_blank" rel="noopener noreferrer" style="--hue:var(--manage)"><small>UK · government</small>Summary of data-protection changes</a>
+            <a href="https://ico.org.uk/about-the-ico/what-we-do/legislation-we-cover/data-use-and-access-act-2025/the-data-use-and-access-act-2025-duaa-summary-of-the-changes/data-protection/" target="_blank" rel="noopener noreferrer" style="--hue:var(--manage)"><small>UK · regulator</small>ICO summary of DUAA data-protection changes</a>
+            <a href="https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/artificial-intelligence/guidance-on-ai-and-data-protection/how-do-we-ensure-individual-rights-in-our-ai-systems/" target="_blank" rel="noopener noreferrer" style="--hue:var(--manage)"><small>UK · regulator, under review</small>ICO guidance on meaningful human review</a>
+            <a href="https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai" target="_blank" rel="noopener noreferrer" style="--hue:var(--data)"><small>EU · Commission</small>AI Act overview and current timeline</a>
+            <a href="https://eur-lex.europa.eu/eli/reg/2024/1689/oj/eng" target="_blank" rel="noopener noreferrer" style="--hue:var(--data)"><small>EU · legislation</small>AI Act, Regulation (EU) 2024/1689</a>
+          </div>
+          <p class="note"><strong>Currency:</strong> legal text and guidance change. This snapshot was checked on 14 October 2026.</p>
+        </section>
+
+        <footer class="footer">
+          <p>Visual companion to Code Institute's “Ethical considerations in Artificial Intelligence”. The LMS capture and independent updates are kept distinct. NIST and OECD figures are teaching redraws, credited where used. This guide supports study and discussion; it isn't legal advice and doesn't settle hard ethical questions.</p>
+          <a class="footer-logo" href="https://github.com/TidyWeb/" target="_blank" rel="noopener noreferrer"><img src="assets/tidyweb_logo.png" alt="TidyWeb logo"><span>Independent companion<br>by TidyWeb</span></a>
+        </footer>
+      </div>
+    </main>
+  </div>
+  <script>
+    (function () {
+      var rail = document.getElementById('rail');
+      var toggle = rail.querySelector('.nav-toggle');
+      toggle.addEventListener('click', function () {
+        var open = rail.classList.toggle('open');
+        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+      rail.querySelectorAll('nav a').forEach(function (a) {
+        a.addEventListener('click', function () { rail.classList.remove('open'); toggle.setAttribute('aria-expanded', 'false'); });
+      });
+      var links = Array.prototype.slice.call(rail.querySelectorAll('nav li:not(.rail-sub) a'));
+      var map = {};
+      links.forEach(function (a) { map[a.getAttribute('href').slice(1)] = a; });
+      if ('IntersectionObserver' in window) {
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting && map[e.target.id]) {
+              links.forEach(function (l) { l.removeAttribute('aria-current'); });
+              map[e.target.id].setAttribute('aria-current', 'true');
+            }
+          });
+        }, { rootMargin: '-30% 0px -60% 0px' });
+        document.querySelectorAll('section.sec').forEach(function (s) { io.observe(s); });
+      }
+      var boxes = document.querySelectorAll('.checklist input[type=checkbox]');
+      var count = document.getElementById('ck-count');
+      var fill = document.getElementById('ck-fill');
+      function update() {
+        var n = 0; boxes.forEach(function (b) { if (b.checked) n++; });
+        count.textContent = n + ' of ' + boxes.length + ' answered';
+        fill.style.width = (boxes.length ? (100 * n / boxes.length) : 0) + '%';
+      }
+      boxes.forEach(function (b) { b.addEventListener('change', update); });
+      update();
+    })();
+  </script>
+</body>
+</html>
